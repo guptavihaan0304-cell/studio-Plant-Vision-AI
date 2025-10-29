@@ -43,9 +43,7 @@ const assistantFlow = ai.defineFlow(
     outputSchema: ChatWithAssistantOutputSchema,
   },
   async (input) => {
-    const history = input.history.map(
-      (msg) => new Message(msg.role, msg.content)
-    );
+    const history = input.history;
     
     const { output } = await prompt({
         messages: [
