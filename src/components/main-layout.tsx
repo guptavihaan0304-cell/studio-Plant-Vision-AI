@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, BookMarked } from 'lucide-react';
+import { Leaf, Bot, BookMarked, MessageSquare } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -58,7 +58,7 @@ export function MainLayout({ children }: { children: React.Node }) {
                 tooltip={{ children: translations.aiAssistant as string }}
               >
                 <Link href="/assistant">
-                  <Bot />
+                  <MessageSquare />
                   <span>{translations.aiAssistant}</span>
                 </Link>
               </SidebarMenuButton>

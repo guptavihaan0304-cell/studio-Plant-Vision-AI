@@ -4,7 +4,7 @@ import { translateText as translateTextFlow } from '@/ai/flows/translate-text';
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
 type Translations = {
-  [key: string]: string | string[];
+  [key: string]: string;
 };
 
 type LanguageContextType = {
@@ -48,25 +48,18 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const newTranslations: Translations = {};
+    const newTranslations: Partial<Translations> = {};
     const translationPromises = Object.entries(defaultTranslations).map(async ([key, value]) => {
-      if (typeof value === 'string') {
         newTranslations[key] = await translateText(value, targetLanguage);
-      } else {
-        newTranslations[key] = value;
-      }
     });
 
     await Promise.all(translationPromises);
-    setTranslations(newTranslations);
+    setTranslations(newTranslations as Translations);
   }, [translateText]);
-
-  useEffect(() => {
-    translateAll(language);
-  }, [language, translateAll]);
   
   const handleSetLanguage = (newLanguage: string) => {
     setLanguage(newLanguage);
+    translateAll(newLanguage);
   };
 
 
