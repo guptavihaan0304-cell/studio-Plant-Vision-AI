@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { useTheme } from 'next-themes';
+import { useToast } from '@/hooks/use-toast';
 
 const languages = [
   'English',
@@ -49,11 +50,19 @@ export function Header() {
   const router = useRouter();
   const auth = getAuth();
   const { setTheme } = useTheme();
+  const { toast } = useToast();
 
 
   const handleSignOut = async () => {
     await signOut(auth);
     router.push('/login');
+  };
+  
+  const handleLanguageSelect = (language: string) => {
+    toast({
+      title: 'Language Selection',
+      description: `${language} selected. Full language support is coming soon.`,
+    });
   };
 
   const filteredLanguages = languages.filter((lang) =>
@@ -109,7 +118,7 @@ export function Header() {
             </div>
             <div className="max-h-60 overflow-y-auto">
               {filteredLanguages.map((language) => (
-                  <DropdownMenuItem key={language}>{language}</DropdownMenuItem>
+                  <DropdownMenuItem key={language} onClick={() => handleLanguageSelect(language)}>{language}</DropdownMenuItem>
               ))}
             </div>
           </DropdownMenuContent>
