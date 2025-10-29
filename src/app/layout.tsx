@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { MainLayout } from '@/components/main-layout';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { LanguageProvider } from '@/hooks/use-language';
 
 export const metadata: Metadata = {
   title: 'PlantVision AI',
@@ -33,7 +34,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <MainLayout>{children}</MainLayout>
+            <LanguageProvider>
+              <MainLayout>{children}</MainLayout>
+            </LanguageProvider>
           </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>

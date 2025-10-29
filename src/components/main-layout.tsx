@@ -16,10 +16,12 @@ import { usePathname } from 'next/navigation';
 import { Leaf, Bot, BookMarked } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
+import { useLanguage } from '@/hooks/use-language';
 
-export function MainLayout({ children }: { children: ReactNode }) {
+export function MainLayout({ children }: { children: React.Node }) {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const { translations } = useLanguage();
 
   // Do not render sidebar-dependent layout on the login page.
   if (pathname === '/login') {
@@ -41,11 +43,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/'}
-                tooltip={{ children: 'AI Analysis' }}
+                tooltip={{ children: translations.aiAnalysis as string }}
               >
                 <Link href="/">
                   <Bot />
-                  <span>AI Analysis</span>
+                  <span>{translations.aiAnalysis}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -53,11 +55,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/assistant'}
-                tooltip={{ children: 'AI Assistant' }}
+                tooltip={{ children: translations.aiAssistant as string }}
               >
                 <Link href="/assistant">
                   <Bot />
-                  <span>AI Assistant</span>
+                  <span>{translations.aiAssistant}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -65,11 +67,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/dashboard'}
-                tooltip={{ children: 'My Records' }}
+                tooltip={{ children: translations.myRecords as string }}
               >
                 <Link href="/dashboard">
                   <BookMarked />
-                  <span>My Records</span>
+                  <span>{translations.myRecords}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

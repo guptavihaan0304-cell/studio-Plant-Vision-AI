@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
-import { translateText } from '@/ai/flows/translate-text';
+import { useLanguage } from '@/hooks/use-language';
 
 const languages = [
   'English',
@@ -52,7 +52,7 @@ export function Header() {
   const auth = getAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
-
+  const { setLanguage, translateText, translations } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -60,17 +60,23 @@ export function Header() {
   };
   
   const handleLanguageSelect = async (language: string) => {
+    setLanguage(language);
     try {
       const originalText = `${language} selected. Full language support is coming soon.`;
       let translatedDescription = originalText;
-
+      
+      let translatedTitle = 'Language Selection';
       if (language !== 'English') {
-        const result = await translateText({ text: originalText, targetLanguage: language });
-        translatedDescription = result.translation;
+        const [descResult, titleResult] = await Promise.all([
+          translateText(originalText, language),
+          translateText(translatedTitle, language),
+        ]);
+        translatedDescription = descResult;
+        translatedTitle = titleResult;
       }
       
       toast({
-        title: language === 'English' ? 'Language Selection' : (await translateText({text: 'Language Selection', targetLanguage: language})).translation,
+        title: translatedTitle,
         description: translatedDescription,
       });
     } catch (error) {
@@ -169,13 +175,13 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>{translations.logOut}</span>
                 </DropdownMenuItem>
               </>
             ) : (
                <DropdownMenuItem onClick={() => router.push('/login')}>
                   <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Login / Sign Up</span>
+                  <span>{translations.loginSignUp}</span>
                 </DropdownMenuItem>
             )}
           </DropdownMenuContent>
