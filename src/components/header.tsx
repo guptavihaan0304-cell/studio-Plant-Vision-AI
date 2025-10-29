@@ -1,15 +1,20 @@
 'use client';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Languages, Leaf } from 'lucide-react';
+import { Languages, Leaf, LogOut, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useUser, useAuth } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getAuth, signOut } from 'firebase/auth';
 
 const languages = [
   'English',
@@ -39,6 +44,14 @@ const languages = [
 
 export function Header() {
   const [searchTerm, setSearchTerm] = useState('');
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const auth = getAuth();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
 
   const filteredLanguages = languages.filter((lang) =>
     lang.toLowerCase().includes(searchTerm.toLowerCase())
@@ -53,29 +66,70 @@ export function Header() {
             <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
         </div>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Languages className="size-5" />
-            <span className="sr-only">Change language</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-           <div className="p-2">
-            <Input
-              placeholder="Search languages..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="max-h-60 overflow-y-auto">
-            {filteredLanguages.map((language) => (
-                <DropdownMenuItem key={language}>{language}</DropdownMenuItem>
-            ))}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex items-center gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Languages className="size-5" />
+              <span className="sr-only">Change language</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="p-2">
+              <Input
+                placeholder="Search languages..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {filteredLanguages.map((language) => (
+                  <DropdownMenuItem key={language}>{language}</DropdownMenuItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+               <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
+                  <AvatarFallback>
+                    <UserIcon />
+                  </AvatarFallback>
+                </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            {isUserLoading ? (
+              <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+            ) : user ? (
+              <>
+                <DropdownMenuItem disabled>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.displayName || 'User'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email || (user.isAnonymous ? 'Anonymous' : '')}
+                    </p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </>
+            ) : (
+               <DropdownMenuItem onClick={() => router.push('/login')}>
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Login / Sign Up</span>
+                </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

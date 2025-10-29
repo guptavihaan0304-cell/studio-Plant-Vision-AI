@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2 } from 'lucide-react';
+import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
@@ -10,6 +10,9 @@ import { identifyPlantSpecies, type IdentifyPlantSpeciesOutput } from '@/ai/flow
 import { diagnosePlantDisease, type DiagnosePlantDiseaseOutput } from '@/ai/flows/diagnose-plant-disease';
 import { suggestPlantCareRemedies, type SuggestPlantCareRemediesOutput } from '@/ai/flows/suggest-plant-care-remedies';
 import { useToast } from '@/hooks/use-toast';
+import { useFirebase } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection } from 'firebase/firestore';
 
 type AnalysisState = {
   identification: IdentifyPlantSpeciesOutput['plantIdentification'] | null;
@@ -22,6 +25,7 @@ export default function AnalysisPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisState | null>(null);
   const { toast } = useToast();
+  const { user, firestore } = useFirebase();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -77,6 +81,35 @@ export default function AnalysisPage() {
   const handleUploadClick = () => {
     document.getElementById('plant-upload')?.click();
   }
+
+  const handleBookmark = () => {
+    if (!user || !analysis || !analysis.identification || !firestore) {
+      toast({
+        variant: 'destructive',
+        title: 'Not signed in',
+        description: 'You need to be signed in to save an analysis.',
+      });
+      return;
+    }
+
+    const analysisData = {
+      userAccountId: user.uid,
+      plantName: analysis.identification.commonName,
+      scientificName: analysis.identification.scientificName,
+      analysisDate: new Date().toISOString(),
+      identifiedDiseases: [analysis.diagnosis?.diagnosis || 'N/A'],
+      remedySuggestions: analysis.remedies?.remedies || 'N/A',
+      plantImageURI: imagePreview,
+    };
+    
+    const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');
+    addDocumentNonBlocking(collectionRef, analysisData);
+
+    toast({
+      title: 'Analysis Saved',
+      description: 'Your plant analysis has been saved to your dashboard.',
+    });
+  };
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
@@ -135,37 +168,47 @@ export default function AnalysisPage() {
 
       {analysis && (
         <div className="mt-8 space-y-8">
-          {analysis.identification && (
-            <Card>
-              <CardHeader className="flex flex-row items-start gap-4">
-                <Leaf className="size-8 text-primary flex-shrink-0" />
-                <div>
-                  <CardTitle className="font-headline text-2xl">Plant Identification</CardTitle>
-                  <CardDescription>Species & Care Information</CardDescription>
+          <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex items-start gap-4">
+                  <Leaf className="size-8 text-primary flex-shrink-0" />
+                  <div>
+                    <CardTitle className="font-headline text-2xl">Plant Identification</CardTitle>
+                    <CardDescription>Species & Care Information</CardDescription>
+                  </div>
                 </div>
+                {user && (
+                  <Button variant="ghost" size="icon" onClick={handleBookmark}>
+                    <Bookmark className="size-6" />
+                    <span className="sr-only">Save Analysis</span>
+                  </Button>
+                )}
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-x-6 gap-y-4 text-left">
-                <div>
-                  <h3 className="font-bold text-lg font-headline">{analysis.identification.commonName}</h3>
-                  <p className="italic text-muted-foreground">{analysis.identification.scientificName}</p>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
+                {analysis.identification && (
+                  <>
                   <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Growth</p>
-                    <p>{analysis.identification.growthRate}</p>
+                    <h3 className="font-bold text-lg font-headline">{analysis.identification.commonName}</h3>
+                    <p className="italic text-muted-foreground">{analysis.identification.scientificName}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Water</p>
-                    <p>{analysis.identification.waterNeeds}</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Growth</p>
+                      <p>{analysis.identification.growthRate}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Water</p>
+                      <p>{analysis.identification.waterNeeds}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Sunlight</p>
+                      <p>{analysis.identification.sunlightRequirements}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Sunlight</p>
-                    <p>{analysis.identification.sunlightRequirements}</p>
-                  </div>
-                </div>
+                  </>
+                )}
               </CardContent>
             </Card>
-          )}
 
           {analysis.diagnosis && (
              <Card>

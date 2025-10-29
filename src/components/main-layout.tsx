@@ -13,11 +13,18 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, LayoutDashboard } from 'lucide-react';
+import { Leaf, Bot, LayoutDashboard, User } from 'lucide-react';
 import { Header } from './header';
+import { useUser } from '@/firebase';
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { user, isUserLoading } = useUser();
+
+  // Do not render sidebar-dependent layout on the login page.
+  if (pathname === '/login') {
+    return <>{children}</>;
+  }
 
   return (
     <SidebarProvider>

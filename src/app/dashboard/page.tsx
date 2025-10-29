@@ -5,8 +5,10 @@ import { LayoutDashboard } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from "firebase/firestore";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const chartData = [
   { month: 'January', health: 85 },
@@ -49,57 +51,49 @@ function HealthHistoryChart() {
 }
 
 function PlantGallery() {
-  const pastAnalyses = [
-    {
-      plant: PlaceHolderImages[0],
-      name: 'Echeveria',
-      date: 'June 15, 2024',
-      status: 'Healthy',
-      statusVariant: 'secondary',
-    },
-    {
-      plant: PlaceHolderImages[1],
-      name: 'Monstera Deliciosa',
-      date: 'June 12, 2024',
-      status: 'Nutrient Deficiency',
-      statusVariant: 'destructive',
-    },
-    {
-      plant: PlaceHolderImages[2],
-      name: 'Fiddle Leaf Fig',
-      date: 'June 1, 2024',
-      status: 'Healthy',
-      statusVariant: 'secondary',
-    },
-    {
-      plant: PlaceHolderImages[3],
-      name: 'Snake Plant',
-      date: 'May 28, 2024',
-      status: 'Watering Issue',
-      statusVariant: 'destructive',
-    },
-  ];
+  const { user, firestore } = useFirebase();
+
+  const analysesQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `users/${user.uid}/plantAnalyses`), orderBy('analysisDate', 'desc'));
+  }, [user, firestore]);
+
+  const { data: pastAnalyses, isLoading } = useCollection(analysesQuery);
+
+  if (isLoading) {
+    return <p>Loading analyses...</p>;
+  }
+
+  if (!pastAnalyses || pastAnalyses.length === 0) {
+    return (
+       <Alert>
+        <AlertTitle className="font-headline">No Analyses Yet</AlertTitle>
+        <AlertDescription>
+          You haven't saved any plant analyses. Go to the AI Analysis page to get started!
+        </AlertDescription>
+      </Alert>
+    )
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {pastAnalyses.map((analysis) => (
-        <Card key={analysis.plant.id} className="overflow-hidden group">
+        <Card key={analysis.id} className="overflow-hidden group">
           <CardContent className="p-0">
             <div className="overflow-hidden">
                <Image
-                src={analysis.plant.imageUrl}
-                alt={analysis.plant.description}
+                src={analysis.plantImageURI}
+                alt={analysis.plantName}
                 width={400}
                 height={300}
-                data-ai-hint={analysis.plant.imageHint}
                 className="object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col items-start p-4">
-            <Badge variant={analysis.statusVariant as any}>{analysis.status}</Badge>
-            <h3 className="font-semibold mt-2 font-headline">{analysis.name}</h3>
-            <p className="text-sm text-muted-foreground">{analysis.date}</p>
+            <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
+            <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
+            <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
           </CardFooter>
         </Card>
       ))}
