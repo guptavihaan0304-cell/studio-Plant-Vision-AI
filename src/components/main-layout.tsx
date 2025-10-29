@@ -59,7 +59,10 @@ export function MainLayout({ children }: { children: ReactNode }) {
       </Sidebar>
       <SidebarInset>
         <Header />
-        <main className="p-4 lg:p-6">{children}</main>
+        <main className="p-4 lg:p-6 flex-1">{children}</main>
+        <footer className="p-4 text-center text-xs text-muted-foreground">
+          All Rights Reserved &copy; 2025
+        </footer>
       </SidebarInset>
     </SidebarProvider>
   );
