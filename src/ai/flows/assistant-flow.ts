@@ -8,8 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-import { Message } from 'genkit/experimental/ai';
+import { z, Message } from 'genkit';
 
 const ChatWithAssistantInputSchema = z.object({
   query: z.string().describe("The user's latest message or question."),
@@ -49,12 +48,9 @@ const assistantFlow = ai.defineFlow(
     outputSchema: ChatWithAssistantOutputSchema,
   },
   async (input) => {
-
-    const historyMessages = input.history.map(h => new Message(h));
-
     const { output } = await prompt({
         ...input,
-        history: historyMessages as any,
+        history: input.history as any,
     });
     return output!;
   }
