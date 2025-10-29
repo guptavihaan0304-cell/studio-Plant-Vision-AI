@@ -51,7 +51,7 @@ const assistantFlow = ai.defineFlow(
         }
     });
 
-    const output = response.output();
+    const output = response.output;
     if (!output) {
       throw new Error('AI failed to generate a response.');
     }
