@@ -16,7 +16,7 @@ export function Header() {
         <SidebarTrigger className="md:hidden" />
         <div className="flex items-center gap-2 md:hidden">
             <Leaf className="text-primary size-6" />
-            <h1 className="font-headline text-xl font-bold text-foreground">Verdant Lens</h1>
+            <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
         </div>
       </div>
       <DropdownMenu>

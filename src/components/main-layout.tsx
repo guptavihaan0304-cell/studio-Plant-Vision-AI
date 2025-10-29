@@ -25,7 +25,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
             <Leaf className="text-primary size-8" />
-            <h1 className="font-headline text-2xl font-bold text-foreground">Verdant Lens</h1>
+            <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>

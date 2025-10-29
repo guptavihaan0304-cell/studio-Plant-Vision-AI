@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { MainLayout } from '@/components/main-layout';
 
 export const metadata: Metadata = {
-  title: 'Verdant Lens',
+  title: 'PlantVision AI',
   description: 'AI-powered plant care assistant.',
 };
 
