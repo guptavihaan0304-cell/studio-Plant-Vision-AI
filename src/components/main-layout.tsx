@@ -52,6 +52,18 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
+                isActive={pathname === '/assistant'}
+                tooltip={{ children: 'AI Assistant' }}
+              >
+                <Link href="/assistant">
+                  <Bot />
+                  <span>AI Assistant</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
                 isActive={pathname === '/dashboard'}
                 tooltip={{ children: 'Health Tracker' }}
               >
