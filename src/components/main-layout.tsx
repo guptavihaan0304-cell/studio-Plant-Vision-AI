@@ -92,13 +92,15 @@ export function MainLayout({ children }: { children: ReactNode }) {
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
-      <SidebarInset>
-        <Header />
-        <main className="p-4 lg:p-6 flex-1">{children}</main>
+      <div className="flex flex-col min-h-screen w-full">
+        <SidebarInset>
+          <Header />
+          <main className="p-4 lg:p-6 flex-1">{children}</main>
+        </SidebarInset>
         <footer className="p-4 text-center text-xs text-muted-foreground">
           All Rights Reserved &copy; 2025 NL DALMIA HIGH SCHOOL 86NG2
         </footer>
-      </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
