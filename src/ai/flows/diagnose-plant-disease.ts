@@ -20,7 +20,7 @@ const DiagnosePlantDiseaseInputSchema = z.object({
 export type DiagnosePlantDiseaseInput = z.infer<typeof DiagnosePlantDiseaseInputSchema>;
 
 const DiagnosePlantDiseaseOutputSchema = z.object({
-  diagnosis: z.string().describe('The diagnosis of the plant disease or deficiency.'),
+  diagnosis: z.string().describe('The diagnosis of the plant disease or deficiency. If the plant is healthy, this should be only the word "Healthy".'),
 });
 export type DiagnosePlantDiseaseOutput = z.infer<typeof DiagnosePlantDiseaseOutputSchema>;
 
@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
 
 Plant Image: {{media url=photoDataUri}}
 
-Provide a detailed diagnosis.`,
+If the plant appears to be healthy and free of disease or deficiency, your entire diagnosis should be the single word: "Healthy". Otherwise, provide a detailed diagnosis.`,
 });
 
 const diagnosePlantDiseaseFlow = ai.defineFlow(

@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   Plant Name: {{{plantName}}}
   Diagnosis: {{{diagnosis}}}
 
-  Provide detailed and practical advice.`,
+  If the diagnosis is "Healthy", provide general care tips for the plant to keep it healthy. Otherwise, provide detailed and practical advice to remedy the specific issue.`,
 });
 
 const suggestPlantCareRemediesFlow = ai.defineFlow(
