@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, LayoutDashboard, User } from 'lucide-react';
+import { Leaf, Bot, BookMarked } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 
@@ -65,11 +65,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/dashboard'}
-                tooltip={{ children: 'Health Tracker' }}
+                tooltip={{ children: 'My Records' }}
               >
                 <Link href="/dashboard">
-                  <LayoutDashboard />
-                  <span>Health Tracker</span>
+                  <BookMarked />
+                  <span>My Records</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

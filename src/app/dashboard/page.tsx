@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { LayoutDashboard } from "lucide-react";
+import { BookMarked } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import Image from 'next/image';
@@ -105,10 +105,10 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
       <div className="flex items-center gap-4">
-        <LayoutDashboard className="size-8 text-primary" />
+        <BookMarked className="size-8 text-primary" />
         <div>
-          <h1 className="font-headline text-3xl">Health Tracker</h1>
-          <p className="text-muted-foreground">Monitor your plants' progress and review past analyses.</p>
+          <h1 className="font-headline text-3xl">My Records</h1>
+          <p className="text-muted-foreground">Review your saved plant analyses and monitor their progress.</p>
         </div>
       </div>
       <Card>
