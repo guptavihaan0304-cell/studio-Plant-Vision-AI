@@ -80,7 +80,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <Header />
         <main className="p-4 lg:p-6 flex-1">{children}</main>
         <footer className="p-4 text-center text-xs text-muted-foreground">
-          All Rights Reserved &copy; 2025
+          All Rights Reserved &copy; 2025 Nirmaan grp 2
         </footer>
       </SidebarInset>
     </SidebarProvider>
