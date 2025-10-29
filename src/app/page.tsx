@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Leaf, ChevronRight } from 'lucide-react';
+import { Leaf, ChevronRight, Bot, History, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WelcomePage() {
@@ -18,38 +18,48 @@ export default function WelcomePage() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
             </p>
-            <Link href="/analysis">
-                <Button size="lg" className="font-bold">
-                    Start Analysis <ChevronRight className="ml-2" />
-                </Button>
-            </Link>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6 text-center">
-            <Card>
+        <div className="grid md:grid-cols-3 gap-6">
+          <Link href="/analysis" className="flex">
+            <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
                 <CardHeader>
-                    <CardTitle className="font-headline">Identify Species</CardTitle>
+                    <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
+                        <Bot className="size-8 text-primary"/>
+                    </div>
+                    <CardTitle className="font-headline text-center">AI Analysis</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <p>Snap a photo to instantly identify any plant with remarkable accuracy.</p>
+                <CardContent className="flex-grow text-center">
+                    <p>Snap a photo to identify species, diagnose issues, and get care tips.</p>
                 </CardContent>
             </Card>
-             <Card>
+          </Link>
+          <Link href="/assistant" className="flex">
+             <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
                 <CardHeader>
-                    <CardTitle className="font-headline">Diagnose Issues</CardTitle>
+                     <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
+                        <MessageSquare className="size-8 text-primary"/>
+                    </div>
+                    <CardTitle className="font-headline text-center">AI Assistant</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <p>Upload an image to detect diseases, pests, and deficiencies.</p>
+                <CardContent className="flex-grow text-center">
+                    <p>Chat with our AI expert for personalized plant care advice.</p>
                 </CardContent>
             </Card>
-             <Card>
+          </Link>
+          <Link href="/dashboard" className="flex">
+             <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
                 <CardHeader>
-                    <CardTitle className="font-headline">Get Expert Advice</CardTitle>
+                     <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
+                        <History className="size-8 text-primary"/>
+                    </div>
+                    <CardTitle className="font-headline text-center">My History</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <p>Receive tailored care tips and natural remedies from our AI assistant.</p>
+                <CardContent className="flex-grow text-center">
+                    <p>Review your past plant analyses and track their progress over time.</p>
                 </CardContent>
             </Card>
+          </Link>
         </div>
     </div>
   );

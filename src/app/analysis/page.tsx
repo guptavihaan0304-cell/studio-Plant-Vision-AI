@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,6 +39,42 @@ export default function AnalysisPage() {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleBookmark = () => {
+    if (!user || !analysis || !analysis.identification || !firestore) {
+      toast({
+        variant: 'destructive',
+        title: 'Not signed in',
+        description: 'You need to be signed in to save an analysis.',
+      });
+      return;
+    }
+
+    const analysisData = {
+      userAccountId: user.uid,
+      plantName: analysis.identification.commonName,
+      scientificName: analysis.identification.scientificName,
+      analysisDate: new Date().toISOString(),
+      identifiedDiseases: [analysis.diagnosis?.diagnosis || 'N/A'],
+      remedySuggestions: analysis.remedies?.remedies || 'N/A',
+      plantImageURI: imagePreview,
+    };
+    
+    const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');
+    addDocumentNonBlocking(collectionRef, analysisData);
+
+    toast({
+      title: 'Analysis Saved',
+      description: 'Your plant analysis has been saved to your history.',
+    });
+  };
+
+  useEffect(() => {
+    if (analysis && user && firestore) {
+      handleBookmark();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysis, user, firestore]);
 
   const handleAnalysis = async (imageDataUri: string) => {
     setIsLoading(true);
@@ -81,35 +117,6 @@ export default function AnalysisPage() {
   const handleUploadClick = () => {
     document.getElementById('plant-upload')?.click();
   }
-
-  const handleBookmark = () => {
-    if (!user || !analysis || !analysis.identification || !firestore) {
-      toast({
-        variant: 'destructive',
-        title: 'Not signed in',
-        description: 'You need to be signed in to save an analysis.',
-      });
-      return;
-    }
-
-    const analysisData = {
-      userAccountId: user.uid,
-      plantName: analysis.identification.commonName,
-      scientificName: analysis.identification.scientificName,
-      analysisDate: new Date().toISOString(),
-      identifiedDiseases: [analysis.diagnosis?.diagnosis || 'N/A'],
-      remedySuggestions: analysis.remedies?.remedies || 'N/A',
-      plantImageURI: imagePreview,
-    };
-    
-    const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');
-    addDocumentNonBlocking(collectionRef, analysisData);
-
-    toast({
-      title: 'Analysis Saved',
-      description: 'Your plant analysis has been saved to your dashboard.',
-    });
-  };
 
   return (
     <div className="container mx-auto max-w-4xl py-8">

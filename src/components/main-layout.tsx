@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, BookMarked, MessageSquare, Home } from 'lucide-react';
+import { Leaf, Bot, History, MessageSquare, Home } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -81,11 +81,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/dashboard'}
-                tooltip={{ children: translations.myRecords as string }}
+                tooltip={{ children: translations.history as string }}
               >
                 <Link href="/dashboard">
-                  <BookMarked />
-                  <span>{translations.myRecords}</span>
+                  <History />
+                  <span>{translations.history}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
