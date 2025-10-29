@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
+import { translateText } from '@/ai/flows/translate-text';
 
 const languages = [
   'English',
@@ -58,11 +59,28 @@ export function Header() {
     router.push('/login');
   };
   
-  const handleLanguageSelect = (language: string) => {
-    toast({
-      title: 'Language Selection',
-      description: `${language} selected. Full language support is coming soon.`,
-    });
+  const handleLanguageSelect = async (language: string) => {
+    try {
+      const originalText = `${language} selected. Full language support is coming soon.`;
+      let translatedDescription = originalText;
+
+      if (language !== 'English') {
+        const result = await translateText({ text: originalText, targetLanguage: language });
+        translatedDescription = result.translation;
+      }
+      
+      toast({
+        title: language === 'English' ? 'Language Selection' : (await translateText({text: 'Language Selection', targetLanguage: language})).translation,
+        description: translatedDescription,
+      });
+    } catch (error) {
+      console.error('Translation failed:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Translation Error',
+        description: 'Could not translate the message. Please try again.',
+      });
+    }
   };
 
   const filteredLanguages = languages.filter((lang) =>
