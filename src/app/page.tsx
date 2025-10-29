@@ -1,11 +1,86 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Leaf, ChevronRight, Bot, History, MessageSquare } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Leaf, ChevronRight, Bot, History, MessageSquare, Microscope } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WelcomePage() {
+  const [showOnboarding, setShowOnboarding] = useState(true);
+
+  if (showOnboarding) {
+    return (
+      <div className="container mx-auto max-w-4xl py-8">
+        <div className="text-center py-12">
+          <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-6">
+            <Leaf className="size-16 text-primary" />
+          </div>
+          <h1 className="text-5xl font-bold font-headline text-primary mb-4">
+            Welcome to PlantVision AI
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            Your intelligent partner in plant care. Let's get you started.
+          </p>
+        </div>
+
+        <Carousel className="w-full max-w-2xl mx-auto">
+          <CarouselContent>
+            <CarouselItem>
+              <Card className="bg-card/80">
+                <CardHeader className="items-center text-center">
+                  <div className="p-3 bg-accent/30 rounded-full">
+                    <Microscope className="size-10 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl mt-4">Identify & Diagnose</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p>Upload a photo of your plant, and our AI will identify its species and check for any diseases or issues.</p>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+            <CarouselItem>
+              <Card className="bg-card/80">
+                <CardHeader className="items-center text-center">
+                   <div className="p-3 bg-accent/30 rounded-full">
+                    <MessageSquare className="size-10 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl mt-4">Chat with an Expert</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p>Ask our AI Assistant anything about plant care, from watering schedules to pest control, and get instant advice.</p>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+            <CarouselItem>
+              <Card className="bg-card/80">
+                <CardHeader className="items-center text-center">
+                   <div className="p-3 bg-accent/30 rounded-full">
+                    <History className="size-10 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl mt-4">Track Your Garden</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p>Every analysis is automatically saved to your history, so you can monitor your plant's health over time.</p>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+
+        <div className="text-center mt-12">
+          <Button size="lg" onClick={() => setShowOnboarding(false)}>
+            Continue
+            <ChevronRight className="ml-2 size-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-4xl py-8">
         <div className="text-center py-16">
@@ -18,18 +93,6 @@ export default function WelcomePage() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
             </p>
-        </div>
-
-        <div className="text-center my-12">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
-              As Seen On
-            </h2>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-muted-foreground">
-              <span className="font-bold text-xl font-headline">GreenThumb Weekly</span>
-              <span className="font-bold text-xl font-headline">PLANTAE</span>
-              <span className="font-bold text-xl font-headline">Modern Farmer</span>
-              <span className="font-bold text-xl font-headline">EcoLife</span>
-            </div>
         </div>
         
         <div className="grid md:grid-cols-3 gap-6">
@@ -72,6 +135,18 @@ export default function WelcomePage() {
                 </CardContent>
             </Card>
           </Link>
+        </div>
+
+        <div className="text-center mt-12">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
+              As Seen On
+            </h2>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-muted-foreground">
+              <span className="font-bold text-xl font-headline">GreenThumb Weekly</span>
+              <span className="font-bold text-xl font-headline">PLANTAE</span>
+              <span className="font-bold text-xl font-headline">Modern Farmer</span>
+              <span className="font-bold text-xl font-headline">EcoLife</span>
+            </div>
         </div>
     </div>
   );
