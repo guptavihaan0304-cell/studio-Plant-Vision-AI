@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Leaf, ChevronRight, Bot, History, MessageSquare, Microscope } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WelcomePage() {
   const [showOnboarding, setShowOnboarding] = useState(true);
+
+  const handleContinueClick = () => {
+    setShowOnboarding(false);
+  };
 
   if (showOnboarding) {
     return (
@@ -72,7 +76,7 @@ export default function WelcomePage() {
         </Carousel>
 
         <div className="text-center mt-12">
-          <Button size="lg" onClick={() => setShowOnboarding(false)}>
+          <Button size="lg" onClick={handleContinueClick}>
             Continue
             <ChevronRight className="ml-2 size-5" />
           </Button>
