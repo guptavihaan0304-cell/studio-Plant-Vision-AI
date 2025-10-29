@@ -9,15 +9,21 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { Message } from 'genkit/experimental/ai';
 
 const ChatWithAssistantInputSchema = z.object({
-  query: z.string().describe('The user\'s latest message or question.'),
-  history: z.string().describe('The previous conversation history.'),
+  query: z.string().describe("The user's latest message or question."),
+  history: z.array(z.object({
+    role: z.enum(['user', 'model']),
+    content: z.array(z.object({
+      text: z.string(),
+    })),
+  })).describe('The previous conversation history.'),
 });
 export type ChatWithAssistantInput = z.infer<typeof ChatWithAssistantInputSchema>;
 
 const ChatWithAssistantOutputSchema = z.object({
-  reply: z.string().describe('The AI assistant\'s response to the user\'s query.'),
+  reply: z.string().describe("The AI assistant's response to the user's query."),
 });
 export type ChatWithAssistantOutput = z.infer<typeof ChatWithAssistantOutputSchema>;
 
@@ -29,17 +35,11 @@ const prompt = ai.definePrompt({
   name: 'assistantPrompt',
   input: { schema: ChatWithAssistantInputSchema },
   output: { schema: ChatWithAssistantOutputSchema },
-  prompt: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.
-
-Based on the conversation history and the user's latest query, provide a helpful response.
-
-Conversation History:
-{{{history}}}
-
-User Query:
-{{{query}}}
-
-Your Reply:`,
+  system: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.`,
+  messages: [
+    ...('{{{history}}}' as any),
+    { role: 'user', content: [{ text: '{{{query}}}' }] },
+  ]
 });
 
 const assistantFlow = ai.defineFlow(
@@ -49,7 +49,13 @@ const assistantFlow = ai.defineFlow(
     outputSchema: ChatWithAssistantOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
+
+    const historyMessages = input.history.map(h => new Message(h));
+
+    const { output } = await prompt({
+        ...input,
+        history: historyMessages as any,
+    });
     return output!;
   }
 );

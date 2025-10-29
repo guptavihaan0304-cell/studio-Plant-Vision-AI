@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
 type Message = {
-  sender: 'user' | 'assistant';
-  text: string;
+  role: 'user' | 'model';
+  content: { text: string }[];
 };
 
 export default function AssistantPage() {
@@ -24,16 +24,16 @@ export default function AssistantPage() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: Message = { sender: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage: Message = { role: 'user', content: [{ text: input }] };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setInput('');
     setIsLoading(true);
 
     try {
-      const history = messages.map(m => `${m.sender}: ${m.text}`).join('\n');
-      const response = await chatWithAssistant({ query: input, history });
+      const response = await chatWithAssistant({ query: input, history: messages });
 
-      const assistantMessage: Message = { sender: 'assistant', text: response.reply };
+      const assistantMessage: Message = { role: 'model', content: [{ text: response.reply }] };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('AI Assistant error:', error);
@@ -67,10 +67,10 @@ export default function AssistantPage() {
               <div
                 key={index}
                 className={`flex items-start gap-3 ${
-                  message.sender === 'user' ? 'justify-end' : 'justify-start'
+                  message.role === 'user' ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {message.sender === 'assistant' && (
+                {message.role === 'model' && (
                   <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot size={20} />
@@ -79,14 +79,14 @@ export default function AssistantPage() {
                 )}
                 <div
                   className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
-                    message.sender === 'user'
+                    message.role === 'user'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted'
                   }`}
                 >
-                  <p className="text-sm">{message.text}</p>
+                  <p className="text-sm">{message.content[0].text}</p>
                 </div>
-                 {message.sender === 'user' && (
+                 {message.role === 'user' && (
                   <Avatar className="w-8 h-8">
                     <AvatarFallback>
                       <User size={20} />
