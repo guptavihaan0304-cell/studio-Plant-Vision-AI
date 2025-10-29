@@ -100,8 +100,8 @@ export default function WelcomePage() {
         </div>
         
         <div className="grid md:grid-cols-3 gap-6">
-          <Link href="/analysis" className="flex">
-            <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+          <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+            <Link href="/analysis" className="flex flex-col flex-grow">
                 <CardHeader>
                     <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <Bot className="size-8 text-primary"/>
@@ -111,10 +111,10 @@ export default function WelcomePage() {
                 <CardContent className="flex-grow text-center">
                     <p>Snap a photo to identify species, diagnose issues, and get care tips.</p>
                 </CardContent>
-            </Card>
-          </Link>
-          <Link href="/assistant" className="flex">
-             <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+            </Link>
+          </Card>
+          <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+             <Link href="/assistant" className="flex flex-col flex-grow">
                 <CardHeader>
                      <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <MessageSquare className="size-8 text-primary"/>
@@ -124,10 +124,10 @@ export default function WelcomePage() {
                 <CardContent className="flex-grow text-center">
                     <p>Chat with our AI expert for personalized plant care advice.</p>
                 </CardContent>
-            </Card>
-          </Link>
-          <Link href="/dashboard" className="flex">
-             <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+            </Link>
+          </Card>
+          <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
+             <Link href="/dashboard" className="flex flex-col flex-grow">
                 <CardHeader>
                      <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <History className="size-8 text-primary"/>
@@ -137,8 +137,8 @@ export default function WelcomePage() {
                 <CardContent className="flex-grow text-center">
                     <p>Review your past plant analyses and track their progress over time.</p>
                 </CardContent>
-            </Card>
-          </Link>
+            </Link>
+          </Card>
         </div>
 
         <div className="text-center mt-12">
