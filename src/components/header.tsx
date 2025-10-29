@@ -8,8 +8,42 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+
+const languages = [
+  'English',
+  'Assamese',
+  'Bengali',
+  'Bodo',
+  'Dogri',
+  'Gujarati',
+  'Hindi',
+  'Kannada',
+  'Kashmiri',
+  'Konkani',
+  'Maithili',
+  'Malayalam',
+  'Manipuri',
+  'Marathi',
+  'Nepali',
+  'Odia',
+  'Punjabi',
+  'Sanskrit',
+  'Santali',
+  'Sindhi',
+  'Tamil',
+  'Telugu',
+  'Urdu',
+];
 
 export function Header() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredLanguages = languages.filter((lang) =>
+    lang.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
       <div className="flex items-center gap-4">
@@ -26,30 +60,20 @@ export function Header() {
             <span className="sr-only">Change language</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>English</DropdownMenuItem>
-          <DropdownMenuItem>Assamese</DropdownMenuItem>
-          <DropdownMenuItem>Bengali</DropdownMenuItem>
-          <DropdownMenuItem>Bodo</DropdownMenuItem>
-          <DropdownMenuItem>Dogri</DropdownMenuItem>
-          <DropdownMenuItem>Gujarati</DropdownMenuItem>
-          <DropdownMenuItem>Hindi</DropdownMenuItem>
-          <DropdownMenuItem>Kannada</DropdownMenuItem>
-          <DropdownMenuItem>Kashmiri</DropdownMenuItem>
-          <DropdownMenuItem>Konkani</DropdownMenuItem>
-          <DropdownMenuItem>Maithili</DropdownMenuItem>
-          <DropdownMenuItem>Malayalam</DropdownMenuItem>
-          <DropdownMenuItem>Manipuri</DropdownMenuItem>
-          <DropdownMenuItem>Marathi</DropdownMenuItem>
-          <DropdownMenuItem>Nepali</DropdownMenuItem>
-          <DropdownMenuItem>Odia</DropdownMenuItem>
-          <DropdownMenuItem>Punjabi</DropdownMenuItem>
-          <DropdownMenuItem>Sanskrit</DropdownMenuItem>
-          <DropdownMenuItem>Santali</DropdownMenuItem>
-          <DropdownMenuItem>Sindhi</DropdownMenuItem>
-          <DropdownMenuItem>Tamil</DropdownMenuItem>
-          <DropdownMenuItem>Telugu</DropdownMenuItem>
-          <DropdownMenuItem>Urdu</DropdownMenuItem>
+        <DropdownMenuContent align="end" className="w-56">
+           <div className="p-2">
+            <Input
+              placeholder="Search languages..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="max-h-60 overflow-y-auto">
+            {filteredLanguages.map((language) => (
+                <DropdownMenuItem key={language}>{language}</DropdownMenuItem>
+            ))}
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
