@@ -13,12 +13,12 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, BookMarked, MessageSquare } from 'lucide-react';
+import { Leaf, Bot, BookMarked, MessageSquare, Home } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
 
-export function MainLayout({ children }: { children: React.Node }) {
+export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
   const { translations } = useLanguage();
@@ -33,19 +33,33 @@ export function MainLayout({ children }: { children: React.Node }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
-            <Leaf className="text-primary size-8" />
-            <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
+            <Link href="/" className="flex items-center gap-2">
+              <Leaf className="text-primary size-8" />
+              <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
+            </Link>
           </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/'}
+                  tooltip={{ children: "Home" }}
+                >
+                  <Link href="/">
+                    <Home />
+                    <span>Home</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === '/'}
+                isActive={pathname === '/analysis'}
                 tooltip={{ children: translations.aiAnalysis as string }}
               >
-                <Link href="/">
+                <Link href="/analysis">
                   <Bot />
                   <span>{translations.aiAnalysis}</span>
                 </Link>

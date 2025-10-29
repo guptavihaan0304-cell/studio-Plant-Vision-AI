@@ -12,12 +12,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useUser } from '@/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
+import Link from 'next/link';
 
 const languages = [
   'English',
@@ -49,6 +50,7 @@ export function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const auth = getAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
@@ -97,10 +99,15 @@ export function Header() {
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="md:hidden" />
-        <div className="flex items-center gap-2 md:hidden">
+        <Link href="/" className="flex items-center gap-2 md:hidden">
             <Leaf className="text-primary size-6" />
             <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
-        </div>
+        </Link>
+        {pathname === '/' && user && (
+            <h2 className="font-headline text-xl font-semibold hidden md:block">
+                Welcome, {user.displayName || 'User'}!
+            </h2>
+        )}
       </div>
       <div className="flex items-center gap-4">
         <DropdownMenu>

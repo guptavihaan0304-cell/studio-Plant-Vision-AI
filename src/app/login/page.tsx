@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/firebase';
 import {
   initiateAnonymousSignIn,
@@ -21,8 +20,9 @@ import {
 } from '@/firebase/non-blocking-login';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { Leaf } from 'lucide-react';
+import { Leaf, User, KeyRound } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
+import { Separator } from '@/components/ui/separator';
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -31,6 +31,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -43,15 +44,9 @@ export default function LoginPage() {
     initiateAnonymousSignIn(auth);
   };
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    initiateEmailSignIn(auth, email, password);
-  };
-
-  const handleEmailSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password.length < 6) {
+    if (isSigningUp && password.length < 6) {
       toast({
         variant: 'destructive',
         title: 'Sign Up Failed',
@@ -60,123 +55,92 @@ export default function LoginPage() {
       return;
     }
     setIsLoading(true);
-    initiateEmailSignUp(auth, email, password);
+    if (isSigningUp) {
+        initiateEmailSignUp(auth, email, password);
+    } else {
+        initiateEmailSignIn(auth, email, password);
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <div className="w-full max-w-md p-4 md:p-0">
-        <div className="flex justify-center mb-6">
-          <Leaf className="text-primary size-12" />
-        </div>
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Welcome Back</CardTitle>
-                <CardDescription>
-                  Sign in to access your saved plant analyses.
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleEmailSignIn}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-login">Email</Label>
-                    <Input
-                      id="email-login"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-login">Password</Label>
-                    <Input
-                      id="password-login"
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col gap-4">
-                  <Button
-                    className="w-full"
-                    type="submit"
+      <Card className="w-full max-w-md mx-4">
+        <CardHeader className="text-center">
+            <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-4">
+              <Leaf className="text-primary size-10" />
+            </div>
+          <CardTitle className="font-headline text-3xl">
+            {isSigningUp ? 'Create an Account' : 'Welcome Back'}
+          </CardTitle>
+          <CardDescription>
+            {isSigningUp ? 'Join to save your plant analyses.' : 'Sign in to access your dashboard.'}
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleEmailAuth}>
+          <CardContent className="space-y-4">
+            <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
-                  >
-                    {isLoading ? 'Signing In...' : 'Sign In'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleAnonymousSignIn}
+                    className="pl-10"
+                />
+            </div>
+            <div className="relative">
+                 <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                 <Input
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    type="button"
-                  >
-                    {isLoading ? 'Please wait...' : 'Continue as Guest'}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Create an Account</CardTitle>
-                <CardDescription>
-                  Join to save your plant analyses and track their health.
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleEmailSignUp}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-signup">Email</Label>
-                    <Input
-                      id="email-signup"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-signup">Password</Label>
-                    <Input
-                      id="password-signup"
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    className="w-full"
-                    type="submit"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+                    className="pl-10"
+                />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            <Button className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? 'Please wait...' : (isSigningUp ? 'Sign Up' : 'Sign In')}
+            </Button>
+            
+            <div className="flex items-center w-full">
+                <Separator className="flex-1" />
+                <span className="px-4 text-xs text-muted-foreground">OR</span>
+                <Separator className="flex-1" />
+            </div>
+
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleAnonymousSignIn}
+              disabled={isLoading}
+              type="button"
+            >
+              Continue as Guest
+            </Button>
+
+          </CardFooter>
+        </form>
+         <div className="p-6 pt-0 text-center">
+            <p className="text-sm">
+                {isSigningUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                <Button variant="link" className="p-0 h-auto" onClick={() => {
+                    setIsSigningUp(!isSigningUp);
+                    setEmail('');
+                    setPassword('');
+                }}>
+                {isSigningUp ? 'Sign In' : 'Sign Up'}
+                </Button>
+            </p>
+         </div>
+      </Card>
     </div>
   );
 }
