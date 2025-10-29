@@ -41,13 +41,11 @@ const assistantFlow = ai.defineFlow(
     
     const response = await ai.generate({
         model: 'googleai/gemini-2.5-flash',
-        prompt: {
-            messages: [
-                { role: 'system', content: [{ text: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.` }] },
-                ...history,
-                { role: 'user', content: [{ text: input.query }] },
-            ]
-        },
+        messages: [
+            { role: 'system', content: [{ text: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.` }] },
+            ...history,
+            { role: 'user', content: [{ text: input.query }] },
+        ],
         output: {
             schema: ChatWithAssistantOutputSchema
         }
