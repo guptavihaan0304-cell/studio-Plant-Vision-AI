@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "plant-1",
+      "description": "A healthy succulent plant in a pot.",
+      "imageUrl": "https://images.unsplash.com/photo-1694898631363-0cdd16603aa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdWNjdWxlbnQlMjBwbGFudHxlbnwwfHx8fDE3NjE3MjU4OTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "succulent plant"
+    },
+    {
+      "id": "plant-2",
+      "description": "A monstera plant with large leaves.",
+      "imageUrl": "https://images.unsplash.com/photo-1653404809389-f370ea4310dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb25zdGVyYSUyMHBsYW50fGVufDB8fHx8MTc2MTY4MTQ5Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "monstera plant"
+    },
+    {
+      "id": "plant-3",
+      "description": "A fiddle leaf fig tree indoors.",
+      "imageUrl": "https://images.unsplash.com/photo-1611527665359-9e058b0ebc50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmaWRkbGUlMjBsZWFmfGVufDB8fHx8MTc2MTY5NzM0NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fiddle leaf"
+    },
+    {
+      "id": "plant-4",
+      "description": "A snake plant in a minimalist pot.",
+      "imageUrl": "https://images.unsplash.com/photo-1613498717076-c0d2d82ecf2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c25ha2UlMjBwbGFudHxlbnwwfHx8fDE3NjE3Mzg5Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "snake plant"
+    }
+  ]
 }
