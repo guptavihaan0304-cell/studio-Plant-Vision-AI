@@ -33,7 +33,6 @@ export async function chatWithAssistant(input: ChatWithAssistantInput): Promise<
 const prompt = ai.definePrompt({
   name: 'assistantPrompt',
   output: { schema: ChatWithAssistantOutputSchema },
-  system: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.`,
 });
 
 const assistantFlow = ai.defineFlow(
@@ -47,6 +46,7 @@ const assistantFlow = ai.defineFlow(
     
     const { output } = await prompt({
         messages: [
+            { role: 'system', content: [{ text: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.` }] },
             ...history,
             { role: 'user', content: [{ text: input.query }] },
         ]
