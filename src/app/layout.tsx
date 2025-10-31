@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { MainLayout } from '@/components/main-layout';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -38,7 +37,6 @@ export default function RootLayout({
               <MainLayout>{children}</MainLayout>
             </LanguageProvider>
           </FirebaseClientProvider>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, History, MessageSquare, Home } from 'lucide-react';
+import { Leaf, Bot, History, MessageSquare, Home, Cog } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
+import { Toaster } from './ui/toaster';
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -89,6 +90,18 @@ export function MainLayout({ children }: { children: ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === '/how-it-works'}
+                tooltip={{ children: 'How It Works' }}
+              >
+                <Link href="/how-it-works">
+                  <Cog />
+                  <span>How It Works</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
@@ -102,6 +115,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <div>Customer Care: +91 88500 14411</div>
         </footer>
       </div>
+      <Toaster />
     </SidebarProvider>
   );
 }
