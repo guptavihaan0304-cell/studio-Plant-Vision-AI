@@ -36,10 +36,12 @@ export default function LoginPage() {
   const [awaitingVerification, setAwaitingVerification] = useState(false);
 
   useEffect(() => {
-    if (!isUserLoading && user && !awaitingVerification) {
-      router.push('/');
+    if (!isUserLoading && user) {
+      if (user.emailVerified || user.isAnonymous) {
+        router.push('/dashboard');
+      }
     }
-  }, [user, isUserLoading, router, awaitingVerification]);
+  }, [user, isUserLoading, router]);
 
 
   const handleAnonymousSignIn = async () => {
@@ -234,5 +236,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    

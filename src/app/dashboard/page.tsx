@@ -126,7 +126,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
       .reverse(); // reverse to show oldest to newest
   }, [analyses]);
 
-  if (chartData.length < 2) {
+  if (chartData.length < 1) {
     return (
       <Card className="h-full flex flex-col justify-center">
         <CardContent>
@@ -134,7 +134,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
             <Leaf className="h-4 w-4" />
             <AlertTitle>Not Enough Data for a Chart</AlertTitle>
             <AlertDescription>
-              Save at least two analyses to see a health trend chart for your plants.
+              Save at least one analysis to see a health trend chart for your plants.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -222,7 +222,7 @@ function PlantGallery() {
     <div className="col-span-1 md:col-span-2">
       <div className="grid grid-cols-1 gap-8">
         <GardenerProfileCard user={user} analysesCount={analyses.length} />
-        {analyses.length > 1 && <HealthChart analyses={analyses} />}
+        {analyses.length > 0 && <HealthChart analyses={analyses} />}
       </div>
     </div>
     <div className="col-span-1 md:col-span-3">
@@ -291,5 +291,3 @@ export default function HistoryPage() {
     </div>
   );
 }
-
-    
