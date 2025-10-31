@@ -1,9 +1,9 @@
 'use client';
 
 import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, query, orderBy, where } from "firebase/firestore";
 import Image from "next/image";
-import { AlertCircle, Bot, Leaf, MessageSquare, Microscope, Pencil } from "lucide-react";
+import { Bot, Pencil, MessageSquare, Microscope, Leaf } from "lucide-react";
 
 interface GrowthTimelineProps {
   userId: string;
@@ -22,20 +22,25 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
   }, [userId, analysisId, firestore, refreshKey]);
 
   const analysisHistoryQuery = useMemoFirebase(() => {
-    if (!userId || !firestore) return null;
+    if (!userId || !firestore || !analysisId) return null;
+    // We only need to fetch the single, original analysis document for the timeline header.
+    // The previous implementation was fetching ALL analyses for the user.
     return query(
         collection(firestore, `users/${userId}/plantAnalyses`),
+        where('__name__', '==', analysisId),
         orderBy('analysisDate', 'desc')
     );
-  }, [userId, firestore]);
+  }, [userId, firestore, analysisId]);
 
   const { data: notes, isLoading: isLoadingNotes } = useCollection(growthTrackersQuery);
   const { data: analyses, isLoading: isLoadingAnalyses } = useCollection(analysisHistoryQuery);
 
+  // Combine notes and the single analysis into one timeline
   const timelineItems = [
-    ...(notes || []).map(note => ({ ...note, type: 'note' })),
-    ...(analyses || []).filter(analysis => analysis.id === analysisId).map(analysis => ({...analysis, type: 'analysis'}))
-  ].sort((a, b) => new Date(b.noteDate || b.analysisDate).getTime() - new Date(a.noteDate || a.analysisDate).getTime());
+    ...(notes || []).map(note => ({ ...note, type: 'note', date: note.noteDate })),
+    ...(analyses || []).map(analysis => ({...analysis, type: 'analysis', date: analysis.analysisDate}))
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 
   if (isLoadingNotes || isLoadingAnalyses) {
     return <p>Loading timeline...</p>;
@@ -57,7 +62,7 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
           </div>
           <div className="flex-1 pb-8">
             <p className="text-sm text-muted-foreground">
-              {new Date(item.noteDate || item.analysisDate).toLocaleString()}
+              {new Date(item.date).toLocaleString()}
             </p>
             <div className="mt-2 p-4 rounded-lg bg-card border">
               {item.type === 'note' ? (
@@ -72,7 +77,7 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
                 </>
               ) : (
                 <div className="space-y-4">
-                    <p className="font-semibold flex items-center gap-2"><Bot className="size-4 text-primary"/> AI Analysis</p>
+                    <p className="font-semibold flex items-center gap-2"><Bot className="size-4 text-primary"/> AI Analysis Created</p>
                     <div className="flex items-center gap-2 text-sm">
                         <Microscope className="size-4 text-muted-foreground"/>
                         <strong>Diagnosis:</strong>
