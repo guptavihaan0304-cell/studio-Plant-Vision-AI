@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
@@ -8,22 +9,29 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, BrainCircuit, Heart, Shield, Paintbrush, Moon, Sun, Laptop, User, LogOut } from "lucide-react";
+import { Settings as SettingsIcon, BrainCircuit, Heart, Shield, Paintbrush, Moon, Sun, Laptop, User, LogOut, Loader2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback } from './ui/avatar';
-
+import { doc, updateDoc, setDoc } from 'firebase/firestore';
 
 export function SettingsPageContent() {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const auth = useAuth();
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const router = useRouter();
-  
-  // State for settings - in a real app, this would come from a user context or database
+
+  const userDocRef = useMemoFirebase(() => {
+      if (!user || !firestore) return null;
+      return doc(firestore, `users/${user.uid}`);
+  }, [user, firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+
   const [aiScanAccuracy, setAiScanAccuracy] = useState("standard");
   const [isRealTimeScan, setIsRealTimeScan] = useState(true);
   const [isVoiceAssistant, setIsVoiceAssistant] = useState(false);
@@ -31,12 +39,52 @@ export function SettingsPageContent() {
   const [skillLevel, setSkillLevel] = useState("beginner");
   const [isPetSafe, setIsPetSafe] = useState(true);
   const [isChildSafe, setIsChildSafe] = useState(true);
+  
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSaveChanges = () => {
-    toast({
+  useEffect(() => {
+    if (userProfile) {
+        setAiScanAccuracy(userProfile.aiScanAccuracy || "standard");
+        setIsRealTimeScan(userProfile.isRealTimeScan ?? true);
+        setIsVoiceAssistant(userProfile.isVoiceAssistant ?? false);
+        setIsOrganicOnly(userProfile.isOrganicOnly ?? false);
+        setSkillLevel(userProfile.skillLevel || "beginner");
+        setIsPetSafe(userProfile.isPetSafe ?? true);
+        setIsChildSafe(userProfile.isChildSafe ?? true);
+    }
+  }, [userProfile]);
+
+  const handleSaveChanges = async () => {
+    if (!userDocRef) return;
+    
+    setIsSaving(true);
+    
+    const settingsData = {
+      aiScanAccuracy,
+      isRealTimeScan,
+      isVoiceAssistant,
+      isOrganicOnly,
+      skillLevel,
+      isPetSafe,
+      isChildSafe
+    };
+
+    try {
+      await setDoc(userDocRef, settingsData, { merge: true });
+      toast({
         title: "Settings Saved",
         description: "Your new preferences have been saved successfully.",
-    });
+      });
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+      toast({
+        variant: 'destructive',
+        title: "Save Failed",
+        description: "Could not save your settings. Please try again.",
+      });
+    } finally {
+        setIsSaving(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -47,6 +95,16 @@ export function SettingsPageContent() {
       description: "You have been successfully signed out.",
     });
   };
+  
+  const isLoading = isUserLoading || isProfileLoading;
+
+  if (isLoading) {
+      return (
+          <div className="flex items-center justify-center min-h-[50vh]">
+              <Loader2 className="size-12 animate-spin text-primary" />
+          </div>
+      )
+  }
 
   return (
     <div className="container mx-auto max-w-2xl py-8">
@@ -85,7 +143,7 @@ export function SettingsPageContent() {
               <AccordionContent className="text-base text-muted-foreground pl-9 space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="scan-accuracy" className="flex-1">AI Scan Accuracy</Label>
-                  <Select value={aiScanAccuracy} onValueChange={setAiScanAccuracy}>
+                  <Select value={aiScanAccuracy} onValueChange={setAiScanAccuracy} disabled={isSaving}>
                     <SelectTrigger className="w-[180px] rounded-full" id="scan-accuracy">
                       <SelectValue placeholder="Select accuracy" />
                     </SelectTrigger>
@@ -98,11 +156,11 @@ export function SettingsPageContent() {
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="real-time-scan">Real-Time AI Scan</Label>
-                  <Switch id="real-time-scan" checked={isRealTimeScan} onCheckedChange={setIsRealTimeScan} />
+                  <Switch id="real-time-scan" checked={isRealTimeScan} onCheckedChange={setIsRealTimeScan} disabled={isSaving} />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="voice-assistant">AI Voice Assistant</Label>
-                  <Switch id="voice-assistant" checked={isVoiceAssistant} onCheckedChange={setIsVoiceAssistant} />
+                  <Switch id="voice-assistant" checked={isVoiceAssistant} onCheckedChange={setIsVoiceAssistant} disabled={isSaving}/>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -117,11 +175,11 @@ export function SettingsPageContent() {
               <AccordionContent className="text-base text-muted-foreground pl-9 space-y-6 pt-4">
                  <div className="flex items-center justify-between">
                   <Label htmlFor="organic-mode">Organic-Only Mode</Label>
-                  <Switch id="organic-mode" checked={isOrganicOnly} onCheckedChange={setIsOrganicOnly} />
+                  <Switch id="organic-mode" checked={isOrganicOnly} onCheckedChange={setIsOrganicOnly} disabled={isSaving}/>
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="skill-level" className="flex-1">Gardening Skill Level</Label>
-                  <Select value={skillLevel} onValueChange={setSkillLevel}>
+                  <Select value={skillLevel} onValueChange={setSkillLevel} disabled={isSaving}>
                     <SelectTrigger className="w-[180px] rounded-full" id="skill-level">
                       <SelectValue placeholder="Select your skill level" />
                     </SelectTrigger>
@@ -144,11 +202,11 @@ export function SettingsPageContent() {
               <AccordionContent className="text-base text-muted-foreground pl-9 space-y-6 pt-4">
                  <div className="flex items-center justify-between">
                   <Label htmlFor="pet-safe">Pet-Safe Plant Warning</Label>
-                  <Switch id="pet-safe" checked={isPetSafe} onCheckedChange={setIsPetSafe} />
+                  <Switch id="pet-safe" checked={isPetSafe} onCheckedChange={setIsPetSafe} disabled={isSaving}/>
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="child-safe">Child-Safe Toxicity Alert</Label>
-                  <Switch id="child-safe" checked={isChildSafe} onCheckedChange={setIsChildSafe} />
+                  <Switch id="child-safe" checked={isChildSafe} onCheckedChange={setIsChildSafe} disabled={isSaving}/>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -175,7 +233,10 @@ export function SettingsPageContent() {
 
         </CardContent>
         <CardFooter className="flex-col gap-4 pt-8">
-            <Button size="lg" onClick={handleSaveChanges} className="w-full rounded-full glow-effect">Save Changes</Button>
+            <Button size="lg" onClick={handleSaveChanges} className="w-full rounded-full glow-effect" disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </Button>
              <Button size="lg" variant="outline" onClick={handleSignOut} className="w-full rounded-full flex items-center gap-2">
                 <LogOut className="size-4"/>
                 Sign Out

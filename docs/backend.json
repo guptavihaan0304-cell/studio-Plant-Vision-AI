@@ -1,10 +1,11 @@
+
 {
   "entities": {
     "UserAccount": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserAccount",
       "type": "object",
-      "description": "Stores user account information.",
+      "description": "Stores user account information and application settings.",
       "properties": {
         "id": {
           "type": "string",
@@ -27,7 +28,44 @@
         "preferredLanguage": {
           "type": "string",
           "description": "The users preferred language.",
-          "format": "string"
+          "default": "English"
+        },
+        "aiScanAccuracy": {
+          "type": "string",
+          "description": "The desired accuracy level for AI scans.",
+          "enum": ["eco", "standard", "ultra"],
+          "default": "standard"
+        },
+        "isRealTimeScan": {
+          "type": "boolean",
+          "description": "Whether to use real-time AI scanning in the camera view.",
+          "default": true
+        },
+        "isVoiceAssistant": {
+          "type": "boolean",
+          "description": "Whether the AI assistant should use voice.",
+          "default": false
+        },
+        "isOrganicOnly": {
+          "type": "boolean",
+          "description": "Whether to only suggest organic remedies.",
+          "default": false
+        },
+        "skillLevel": {
+          "type": "string",
+          "description": "The user's self-reported gardening skill level.",
+          "enum": ["beginner", "expert"],
+          "default": "beginner"
+        },
+        "isPetSafe": {
+          "type": "boolean",
+          "description": "Whether to warn about plants that are not pet-safe.",
+          "default": true
+        },
+        "isChildSafe": {
+          "type": "boolean",
+          "description": "Whether to provide alerts about plant toxicity for children.",
+          "default": true
         }
       },
       "required": [
