@@ -1,9 +1,10 @@
 'use client';
 
 import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, where } from "firebase/firestore";
+import { collection, query, orderBy, where, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import { Bot, Pencil, MessageSquare, Microscope, Leaf } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface GrowthTimelineProps {
   userId: string;
@@ -21,28 +22,44 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     );
   }, [userId, analysisId, firestore, refreshKey]);
 
-  const analysisHistoryQuery = useMemoFirebase(() => {
-    if (!userId || !firestore || !analysisId) return null;
-    // We only need to fetch the single, original analysis document for the timeline header.
-    // The previous implementation was fetching ALL analyses for the user.
-    return query(
-        collection(firestore, `users/${userId}/plantAnalyses`),
-        where('__name__', '==', analysisId),
-        orderBy('analysisDate', 'desc')
-    );
-  }, [userId, firestore, analysisId]);
+   const analysisRef = useMemoFirebase(() => {
+    if (!firestore || !userId || !analysisId) return null;
+    return doc(firestore, `users/${userId}/plantAnalyses`, analysisId as string);
+  }, [firestore, userId, analysisId]);
 
   const { data: notes, isLoading: isLoadingNotes } = useCollection(growthTrackersQuery);
-  const { data: analyses, isLoading: isLoadingAnalyses } = useCollection(analysisHistoryQuery);
+  const [initialAnalysis, setInitialAnalysis] = useState<any>(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      if (analysisRef) {
+        try {
+          const docSnap = await getDoc(analysisRef);
+          if (docSnap.exists()) {
+            setInitialAnalysis({ ...docSnap.data(), id: docSnap.id });
+          }
+        } catch (error) {
+          console.error("Error fetching initial analysis:", error);
+        } finally {
+          setIsLoadingAnalysis(false);
+        }
+      } else {
+        setIsLoadingAnalysis(false);
+      }
+    };
+    fetchAnalysis();
+  }, [analysisRef]);
+
 
   // Combine notes and the single analysis into one timeline
   const timelineItems = [
     ...(notes || []).map(note => ({ ...note, type: 'note', date: note.noteDate })),
-    ...(analyses || []).map(analysis => ({...analysis, type: 'analysis', date: analysis.analysisDate}))
+    ...(initialAnalysis ? [{...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate}] : [])
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 
-  if (isLoadingNotes || isLoadingAnalyses) {
+  if (isLoadingNotes || isLoadingAnalysis) {
     return <p>Loading timeline...</p>;
   }
 
@@ -99,3 +116,5 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     </div>
   );
 }
+
+    

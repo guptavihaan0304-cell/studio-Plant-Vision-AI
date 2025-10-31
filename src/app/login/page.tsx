@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import {
   initiateAnonymousSignIn,
   initiateEmailSignUp,
@@ -20,11 +20,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Sprout, User, KeyRound, MailCheck, Loader2 } from 'lucide-react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { Separator } from '@/components/ui/separator';
 
 export default function LoginPage() {
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
@@ -35,11 +35,12 @@ export default function LoginPage() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [awaitingVerification, setAwaitingVerification] = useState(false);
 
-  onAuthStateChanged(auth, (user) => {
-    if (user && !awaitingVerification) {
+  useEffect(() => {
+    if (!isUserLoading && user && !awaitingVerification) {
       router.push('/');
     }
-  });
+  }, [user, isUserLoading, router, awaitingVerification]);
+
 
   const handleAnonymousSignIn = async () => {
     setIsLoading(true);
@@ -233,3 +234,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
