@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 const chartConfig = {
   health: {
@@ -22,6 +23,30 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount: number }) {
+  if (!user || user.isAnonymous) {
+      return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="font-headline text-3xl">Create a Profile</CardTitle>
+                <CardDescription>Sign up to track your plants and earn rewards!</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Alert>
+                    <Leaf className="h-4 w-4" />
+                    <AlertTitle>Welcome, Guest!</AlertTitle>
+                    <AlertDescription>
+                        Create an account to save your plant analyses, track their growth, and level up your gardener rank.
+                    </AlertDescription>
+                </Alert>
+            </CardContent>
+            <CardFooter>
+                 <Button asChild className="w-full">
+                    <Link href="/login">Sign Up / Login</Link>
+                </Button>
+            </CardFooter>
+        </Card>
+      )
+  }
   return (
     <Card>
       <CardHeader>
@@ -145,7 +170,7 @@ function PlantGallery() {
   const { user, firestore } = useFirebase();
 
   const analysesQuery = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
+    if (!user || !firestore || user.isAnonymous) return null;
     return query(collection(firestore, `users/${user.uid}/plantAnalyses`), orderBy('analysisDate', 'desc'));
   }, [user, firestore]);
 
@@ -155,9 +180,22 @@ function PlantGallery() {
     return <p>Loading history...</p>;
   }
 
-  if (!user || !pastAnalyses || pastAnalyses.length === 0) {
+  if (!user || user.isAnonymous) {
+       return (
+       <div className="col-span-full md:col-span-3">
+        <Alert>
+          <AlertTitle className="font-headline">Sign Up to Track Your Plants</AlertTitle>
+          <AlertDescription>
+            Create a free account to save your plant analyses and watch them grow over time. Your personal plant dashboard awaits!
+          </AlertDescription>
+        </Alert>
+       </div>
+    )
+  }
+
+  if (!pastAnalyses || pastAnalyses.length === 0) {
     return (
-       <div className="col-span-full">
+       <div className="col-span-full md:col-span-3">
         <Alert>
           <AlertTitle className="font-headline">No History Yet</AlertTitle>
           <AlertDescription>
@@ -208,13 +246,16 @@ function PlantGallery() {
 }
 
 export default function HistoryPage() {
+    const { user } = useFirebase();
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
       <div className="flex items-center gap-4">
         <History className="size-8 text-accent" />
         <div>
           <h1 className="font-headline text-3xl">Growth Tracker</h1>
-          <p className="text-muted-foreground">Review your saved plant analyses and track their growth.</p>
+          <p className="text-muted-foreground">
+             {user && !user.isAnonymous ? "Review your saved plant analyses and track their growth." : "Sign up to save and track your plants."}
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8">

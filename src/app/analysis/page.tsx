@@ -44,11 +44,11 @@ export default function AnalysisPage() {
   };
 
   const handleBookmark = () => {
-    if (!user || !analysis || !analysis.identification || !analysis.diagnosis || !firestore) {
+    if (!user || user.isAnonymous || !analysis || !analysis.identification || !analysis.diagnosis || !firestore) {
       toast({
         variant: 'destructive',
-        title: 'Not signed in',
-        description: 'You need to be signed in to save an analysis.',
+        title: 'Sign Up to Save',
+        description: 'You need to create an account to save your analyses.',
       });
       return;
     }
