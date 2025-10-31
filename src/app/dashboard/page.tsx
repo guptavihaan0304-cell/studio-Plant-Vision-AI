@@ -279,7 +279,7 @@ export default function HistoryPage() {
       <div className="flex items-center gap-4">
         <History className="size-8 text-accent" />
         <div>
-          <h1 className="font-headline text-3xl">Growth Tracker</h1>
+          <h1 className="font-headline text-3xl">Dashboard</h1>
           <p className="text-muted-foreground">
              {user && !user.isAnonymous ? "Review your saved plant analyses and track their growth." : "Sign up to save and track your plants."}
           </p>

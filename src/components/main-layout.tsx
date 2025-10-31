@@ -81,11 +81,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/dashboard'}
-                tooltip={{ children: translations.history as string }}
+                tooltip={{ children: "Dashboard" }}
               >
                 <Link href="/dashboard">
                   <History />
-                  <span>{translations.history}</span>
+                  <span>Dashboard</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -123,8 +123,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         </SidebarInset>
         <footer className="p-4 text-center text-xs text-muted-foreground">
             <div className="font-headline font-semibold mb-2">Growing plants smarter with AI.</div>
-            <div>All Rights Reserved &copy; 2025 NL DALMIA HIGH SCHOOL 86NG2</div>
-            <div>Customer Care: +91 88500 14411</div>
+            <div>&copy; 2025 PlantVision AI. All Rights Reserved.</div>
         </footer>
       </div>
     </SidebarProvider>
