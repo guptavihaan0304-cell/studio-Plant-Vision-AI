@@ -111,6 +111,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
           <main className="p-4 lg:p-6 flex-1">{children}</main>
         </SidebarInset>
         <footer className="p-4 text-center text-xs text-muted-foreground">
+            <div className="font-headline font-semibold mb-2">Growing plants smarter with AI.</div>
             <div>All Rights Reserved &copy; 2025 NL DALMIA HIGH SCHOOL 86NG2</div>
             <div>Customer Care: +91 88500 14411</div>
         </footer>

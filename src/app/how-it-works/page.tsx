@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Cog, Leaf, Microscope, Pill, BrainCircuit, MessageSquare, Languages } from "lucide-react";
+import { Cog, Leaf, Microscope, Pill, BrainCircuit, MessageSquare, Languages, Database, BarChart, FlaskConical, Target, Telescope } from "lucide-react";
 
 export default function HowItWorksPage() {
   return (
@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground pl-9">
-                <p>When you upload an image, we convert it into a format the AI can understand (a data URI). This is sent to a powerful vision model with a specific prompt: "You are an expert botanist... identify the plant in this image." The model analyzes the pixels and patterns, compares them to its vast knowledge base of plants, and returns the common and scientific names, along with basic care info like growth rate and water needs.</p>
+                <p>When you upload an image, we convert it into a format the AI can understand. This is sent to a powerful vision model with a specific prompt: "You are an expert botanist... identify the plant in this image." The model analyzes the pixels and patterns, compares them to its vast knowledge base of plants, and returns the common and scientific names, along with basic care info like growth rate and water needs.</p>
               </AccordionContent>
             </AccordionItem>
             
@@ -39,7 +39,7 @@ export default function HowItWorksPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground pl-9">
-                <p>Simultaneously with identification, the same image is sent to another AI prompt, this one specialized for plant pathology. The prompt instructs the model: "You are an expert plant pathologist... analyze this image and diagnose any diseases." It looks for signs of distress like discoloration, spots, or pests. If it finds an issue, it provides a diagnosis. If not, it simply returns "Healthy."</p>
+                <p>Simultaneously, the same image is sent to another AI prompt specialized for plant pathology. The prompt instructs the model: "You are an expert plant pathologist... analyze this image and diagnose any diseases." It looks for signs of distress like discoloration, spots, or pests. If it finds an issue, it provides a diagnosis. If not, it simply returns "Healthy."</p>
               </AccordionContent>
             </AccordionItem>
             
@@ -51,7 +51,7 @@ export default function HowItWorksPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground pl-9">
-                <p>Once we have the plant's name and its diagnosis, we make a third AI call. This time, we send only text: the plant name and the diagnosis result. The prompt is: "You are an expert in organic remedies... suggest natural care tips based on this plant and its issue." The AI then generates a tailored set of recommendations to help you nurse your plant back to health or keep it thriving.</p>
+                <p>Once we have the plant's name and its diagnosis, we make a third AI call. This time, we send only text: the plant name and the diagnosis result. The prompt is: "You are an expert in organic remedies... suggest natural care tips based on this plant and its issue." The AI then generates a tailored set of recommendations.</p>
               </AccordionContent>
             </AccordionItem>
             
@@ -63,7 +63,7 @@ export default function HowItWorksPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground pl-9">
-                <p>The AI Assistant is a conversational model. When you send a message, we send your query along with the entire chat history to the AI. A system prompt at the beginning of the conversation tells the model: "You are a friendly and knowledgeable AI Plant Care Assistant." This gives it the context and personality to answer your questions about gardening, plant care, and more in a helpful, conversational way.</p>
+                <p>The AI Assistant is a conversational model. When you send a message, we send your query along with the entire chat history to the AI. A system prompt at the beginning tells the model: "You are a friendly and knowledgeable AI Plant Care Assistant." This gives it the context to answer your questions in a helpful, conversational way.</p>
               </AccordionContent>
             </AccordionItem>
 
@@ -75,7 +75,64 @@ export default function HowItWorksPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground pl-9">
-                <p>When you select a language, the app uses another specialized AI flow. We send the English UI text (like "AI Analysis") and your target language to a translation model. The prompt is simple: "Translate the following text into [Your Language]: '[English Text]'." The AI returns the translated text, which we then display in the user interface, making the app accessible to a global audience.</p>
+                <p>When you select a language, the app uses another specialized AI flow. We send the English UI text and your target language to a translation model. The prompt is simple: "Translate the following text into [Your Language]: '[English Text]'." The AI returns the translated text, which we then display in the user interface.</p>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-6">
+              <AccordionTrigger className="font-headline text-xl">
+                <div className="flex items-center gap-3">
+                  <FlaskConical className="size-6 text-primary" />
+                  <span>AI & Machine Learning</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground pl-9">
+                <p>The app uses Convolutional Neural Networks (CNN), a class of deep learning models ideal for image analysis. The CNN learns to identify features like leaf shapes, textures, and color patterns from images. For disease detection, it analyzes anomalies such as spots, discoloration, and textural changes to classify different health issues.</p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-7">
+              <AccordionTrigger className="font-headline text-xl">
+                <div className="flex items-center gap-3">
+                  <Database className="size-6 text-primary" />
+                  <span>Training Dataset</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground pl-9">
+                <p>Our model has been trained on a diverse and extensive dataset of over 50,000+ images of plants. This includes a wide variety of species in different environments and health conditions, ensuring the AI can make accurate identifications and diagnoses across many scenarios.</p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-8">
+              <AccordionTrigger className="font-headline text-xl">
+                <div className="flex items-center gap-3">
+                  <Target className="size-6 text-primary" />
+                  <span>Real-World Applications</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground pl-9">
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong>Home Gardening:</strong> Helping hobbyists care for their indoor and outdoor plants.</li>
+                  <li><strong>Agriculture:</strong> Assisting farmers with early detection of crop diseases, potentially improving yields.</li>
+                  <li><strong>Nursery Management:</strong> Enabling nursery staff to quickly identify and manage pest or disease outbreaks.</li>
+                  <li><strong>Smart Farming:</strong> Integrating with automated systems for precision care and monitoring.</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-9">
+              <AccordionTrigger className="font-headline text-xl">
+                <div className="flex items-center gap-3">
+                  <Telescope className="size-6 text-primary" />
+                  <span>Future Scope</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground pl-9">
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong>Smart Plant Sensors:</strong> Integrating with IoT sensors to gather real-time data on soil moisture, light, and nutrients.</li>
+                  <li><strong>Plant Health Prediction:</strong> Using historical data to predict potential health issues before they become visible.</li>
+                  <li><strong>Automated Watering Systems:</strong> Connecting the app to smart irrigation systems to water plants automatically based on their needs.</li>
+                </ul>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
