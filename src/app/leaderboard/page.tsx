@@ -6,19 +6,36 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+const ranks = [
+    { name: "Sprout", minXp: 0 },
+    { name: "Seedling", minXp: 100 },
+    { name: "Gardener", minXp: 250 },
+    { name: "Botanist", minXp: 500 },
+];
+
+function calculateRankName(xp: number): string {
+    for (let i = ranks.length - 1; i >= 0; i--) {
+        if (xp >= ranks[i].minXp) {
+            return ranks[i].name;
+        }
+    }
+    return ranks[0].name;
+}
+
 // Mock data for the leaderboard. In a real application, this would come from a backend.
 const leaderboardData = [
-  { rank: 1, name: "Greta Thunberg", xp: 10500, rankName: "Plant Master" },
-  { rank: 2, name: "David Attenborough", xp: 9800, rankName: "Botanist" },
-  { rank: 3, name: "Jane Goodall", xp: 9250, rankName: "Botanist" },
-  { rank: 4, name: "User123", xp: 8500, rankName: "Botanist" },
-  { rank: 5, name: "PlantLover_99", xp: 7800, rankName: "Botanist" },
-  { rank: 6, name: "Farmer Joe", xp: 6200, rankName: "Botanist" },
-  { rank: 7, name: "Gardener_Gal", xp: 4500, rankName: "Botanist" },
-  { rank: 8, name: "SproutMan", xp: 2100, rankName: "Botanist" },
-  { rank: 9, name: "Leafy_Green", xp: 1500, rankName: "Botanist" },
-  { rank: 10, name: "Petal_Pusher", xp: 800, rankName: "Botanist" },
-];
+  { rank: 1, name: "Leafy_Green", xp: 10500 },
+  { rank: 2, name: "Gardener_Gal", xp: 9800 },
+  { rank: 3, name: "SproutMan", xp: 9250 },
+  { rank: 4, name: "User123", xp: 8500 },
+  { rank: 5, name: "PlantLover_99", xp: 7800 },
+  { rank: 6, name: "Farmer_Joe", xp: 6200 },
+  { rank: 7, name: "MossBoss", xp: 4500 },
+  { rank: 8, name: "RootWizard", xp: 2100 },
+  { rank: 9, name: "AloeVeraFan", xp: 1500 },
+  { rank: 10, name: "Petal_Pusher", xp: 800 },
+].map(user => ({...user, rankName: calculateRankName(user.xp)}));
+
 
 function getRankColor(rank: number) {
   if (rank === 1) return "text-yellow-500";
