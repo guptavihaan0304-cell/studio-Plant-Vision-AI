@@ -193,7 +193,7 @@ function PlantGallery() {
                     />
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col items-start p-4 bg-white">
+                <CardFooter className="flex flex-col items-start p-4 bg-white dark:bg-card">
                   <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
                   <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
                   <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
