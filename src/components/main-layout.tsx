@@ -36,7 +36,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2 p-2">
             <Link href="/" className="flex items-center gap-2">
               <Leaf className="text-primary size-8" />
-              <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
+              <h1 className="font-headline text-2xl font-bold text-foreground">Verdant Lens</h1>
             </Link>
           </div>
         </SidebarHeader>

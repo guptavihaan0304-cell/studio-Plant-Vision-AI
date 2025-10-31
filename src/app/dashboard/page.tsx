@@ -48,7 +48,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-4">
-          <LineChartIcon className="size-8 text-primary" />
+          <LineChartIcon className="size-8 text-accent" />
           <div>
             <CardTitle className="font-headline text-3xl">Health Trend</CardTitle>
             <CardDescription>Visualizing your plant's health over time.</CardDescription>
@@ -134,7 +134,7 @@ function PlantGallery() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {pastAnalyses.map((analysis) => (
             <Link href={`/growth-tracker/${analysis.id}`} key={analysis.id}>
-              <Card className="overflow-hidden group h-full">
+              <Card className="overflow-hidden group h-full shadow-md hover:shadow-xl transition-shadow duration-300">
                 <CardContent className="p-0">
                   <div className="overflow-hidden">
                     <Image
@@ -146,7 +146,7 @@ function PlantGallery() {
                     />
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col items-start p-4">
+                <CardFooter className="flex flex-col items-start p-4 bg-white">
                   <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
                   <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
                   <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
@@ -164,7 +164,7 @@ export default function HistoryPage() {
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
       <div className="flex items-center gap-4">
-        <History className="size-8 text-primary" />
+        <History className="size-8 text-accent" />
         <div>
           <h1 className="font-headline text-3xl">Growth Tracker</h1>
           <p className="text-muted-foreground">Review your saved plant analyses and track their growth.</p>

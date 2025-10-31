@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,13 +69,6 @@ export default function AnalysisPage() {
     });
   };
 
-  useEffect(() => {
-    if (analysis && user && firestore) {
-      handleBookmark();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysis, user, firestore]);
-
   const handleAnalysis = async (imageDataUri: string) => {
     setIsLoading(true);
     setAnalysis(null);
@@ -94,12 +87,34 @@ export default function AnalysisPage() {
           plantName: identificationResult.plantIdentification.commonName,
           diagnosis: diagnosisResult.diagnosis
       });
-
-      setAnalysis({
+      
+      const newAnalysis = {
         identification: identificationResult.plantIdentification,
         diagnosis: diagnosisResult,
         remedies: remediesResult,
-      });
+      };
+
+      setAnalysis(newAnalysis);
+
+       if (user && firestore) {
+          const analysisData = {
+            userAccountId: user.uid,
+            plantName: newAnalysis.identification.commonName,
+            scientificName: newAnalysis.identification.scientificName,
+            analysisDate: new Date().toISOString(),
+            identifiedDiseases: [newAnalysis.diagnosis?.diagnosis || 'N/A'],
+            remedySuggestions: newAnalysis.remedies?.remedies || 'N/A',
+            plantImageURI: imageDataUri,
+          };
+          const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');
+          addDocumentNonBlocking(collectionRef, analysisData);
+
+          toast({
+            title: 'Analysis Saved',
+            description: 'Your plant analysis has been automatically saved.',
+          });
+      }
+
 
     } catch (error) {
       console.error('Analysis failed:', error);
@@ -120,9 +135,9 @@ export default function AnalysisPage() {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <Card className="text-center bg-card/80 backdrop-blur-sm">
+      <Card className="text-center shadow-lg">
         <CardHeader>
-          <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit">
+          <div className="mx-auto bg-secondary p-3 rounded-full w-fit">
             <BrainCircuit className="size-8 text-primary" />
           </div>
           <CardTitle className="font-headline text-3xl mt-4">AI Plant Analysis</CardTitle>
@@ -132,7 +147,7 @@ export default function AnalysisPage() {
         </CardHeader>
         <CardContent>
           <div
-            className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[250px] cursor-pointer hover:bg-accent/10 transition-colors"
+            className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[250px] cursor-pointer hover:bg-secondary/50 transition-colors"
             onClick={handleUploadClick}
           >
             <input
@@ -175,17 +190,17 @@ export default function AnalysisPage() {
 
       {analysis && (
         <div className="mt-8 space-y-8">
-          <Card>
+          <Card className="shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-start gap-4">
-                  <Leaf className="size-8 text-primary flex-shrink-0" />
+                  <Leaf className="size-8 text-accent flex-shrink-0" />
                   <div>
                     <CardTitle className="font-headline text-2xl">Plant Identification</CardTitle>
                     <CardDescription>Species & Care Information</CardDescription>
                   </div>
                 </div>
-                {user && (
-                  <Button variant="ghost" size="icon" onClick={handleBookmark}>
+                {!user && (
+                  <Button variant="ghost" size="icon" onClick={handleBookmark} title="Save analysis">
                     <Bookmark className="size-6" />
                     <span className="sr-only">Save Analysis</span>
                   </Button>
@@ -218,9 +233,9 @@ export default function AnalysisPage() {
             </Card>
 
           {analysis.diagnosis && (
-             <Card>
+             <Card className="shadow-lg">
               <CardHeader className="flex flex-row items-start gap-4">
-                <Microscope className="size-8 text-primary flex-shrink-0" />
+                <Microscope className="size-8 text-accent flex-shrink-0" />
                 <div>
                   <CardTitle className="font-headline text-2xl">Health Diagnosis</CardTitle>
                   <CardDescription>AI-powered disease and deficiency detection.</CardDescription>
@@ -233,16 +248,16 @@ export default function AnalysisPage() {
           )}
 
           {analysis.remedies && (
-            <Card>
+            <Card className="shadow-lg">
               <CardHeader className="flex flex-row items-start gap-4">
-                <Pill className="size-8 text-primary flex-shrink-0" />
+                <Pill className="size-8 text-accent flex-shrink-0" />
                 <div>
                   <CardTitle className="font-headline text-2xl">Care & Remedy Suggestions</CardTitle>
                   <CardDescription>Natural and organic solutions for a healthy plant.</CardDescription>
                 </div>
               </CardHeader>
               <CardContent className="text-left space-y-2">
-                 <p>{analysis.remedies.remedies}</p>
+                 <p className="whitespace-pre-wrap">{analysis.remedies.remedies}</p>
               </CardContent>
             </Card>
           )}

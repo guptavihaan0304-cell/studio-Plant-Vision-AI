@@ -43,7 +43,7 @@ export default function AssistantPage() {
         description: 'Failed to get a response from the assistant. Please try again.',
       });
       // remove the user message if the assistant fails
-      setMessages(messages.slice(0, -1));
+      setMessages((prev) => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
     }
@@ -51,9 +51,9 @@ export default function AssistantPage() {
 
   return (
     <div className="container mx-auto max-w-3xl py-8 flex flex-col h-[calc(100vh-10rem)]">
-      <Card className="flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col shadow-xl">
         <CardHeader className="text-center">
-           <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit">
+           <div className="mx-auto bg-secondary p-3 rounded-full w-fit">
              <Bot className="size-8 text-primary" />
            </div>
           <CardTitle className="font-headline text-3xl mt-4">AI Plant Care Assistant</CardTitle>
@@ -63,6 +63,12 @@ export default function AssistantPage() {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 overflow-y-auto p-6">
           <div className="flex-grow space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center text-muted-foreground h-full flex flex-col justify-center items-center">
+                  <Bot className="size-16 mb-4"/>
+                  <p className="font-headline">I'm ready to help. Ask me a question!</p>
+              </div>
+            )}
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -71,20 +77,20 @@ export default function AssistantPage() {
                 }`}
               >
                 {message.role === 'model' && (
-                  <Avatar className="w-8 h-8">
+                  <Avatar className="w-8 h-8 border-2 border-primary/50">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot size={20} />
                     </AvatarFallback>
                   </Avatar>
                 )}
                 <div
-                  className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
+                  className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 shadow-sm ${
                     message.role === 'user'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted'
                   }`}
                 >
-                  <p className="text-sm">{message.content[0].text}</p>
+                  <p className="text-sm whitespace-pre-wrap">{message.content[0].text}</p>
                 </div>
                  {message.role === 'user' && (
                   <Avatar className="w-8 h-8">
@@ -97,12 +103,12 @@ export default function AssistantPage() {
             ))}
              {isLoading && (
                 <div className="flex items-start gap-3 justify-start">
-                   <Avatar className="w-8 h-8">
+                   <Avatar className="w-8 h-8 border-2 border-primary/50">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot size={20} />
                     </AvatarFallback>
                   </Avatar>
-                  <div className="bg-muted rounded-lg px-4 py-2 flex items-center gap-2">
+                  <div className="bg-muted rounded-lg px-4 py-2 flex items-center gap-2 shadow-sm">
                     <Loader2 className="size-4 animate-spin" />
                     <span className="text-sm text-muted-foreground">Thinking...</span>
                   </div>
