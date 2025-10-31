@@ -4,9 +4,10 @@ import { MainLayout } from '@/components/main-layout';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { LanguageProvider } from '@/hooks/use-language';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Verdant Lens',
+  title: 'PlantVision AI',
   description: 'AI-powered plant care assistant.',
 };
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           <FirebaseClientProvider>
             <LanguageProvider>
               <MainLayout>{children}</MainLayout>
+              <Toaster />
             </LanguageProvider>
           </FirebaseClientProvider>
         </ThemeProvider>

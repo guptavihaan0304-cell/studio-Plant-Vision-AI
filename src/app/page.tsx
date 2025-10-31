@@ -12,7 +12,7 @@ export default function WelcomePage() {
                 <Leaf className="size-16 text-primary" />
             </div>
             <h1 className="text-5xl font-bold font-headline text-primary mb-4">
-                Welcome to Verdant Lens
+                Welcome to PlantVision AI
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
@@ -23,8 +23,8 @@ export default function WelcomePage() {
         </div>
         
         <div className="grid md:grid-cols-3 gap-6">
-          <Link href="/analysis" className="group">
             <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
+                <Link href="/analysis" className="group flex flex-col h-full">
                   <CardHeader className="p-6">
                       <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
                           <Bot className="size-8 text-primary group-hover:text-accent-foreground"/>
@@ -34,10 +34,10 @@ export default function WelcomePage() {
                   <CardContent className="flex-grow text-center p-6 pt-0">
                       <p>Snap a photo to identify species, diagnose issues, and get care tips.</p>
                   </CardContent>
+                </Link>
             </Card>
-          </Link>
-           <Link href="/assistant" className="group">
             <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
+              <Link href="/assistant" className="group flex flex-col h-full">
                   <CardHeader className="p-6">
                        <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
                           <MessageSquare className="size-8 text-primary group-hover:text-accent-foreground"/>
@@ -47,10 +47,10 @@ export default function WelcomePage() {
                   <CardContent className="flex-grow text-center p-6 pt-0">
                       <p>Chat with our AI expert for personalized plant care advice.</p>
                   </CardContent>
+              </Link>
             </Card>
-          </Link>
-           <Link href="/dashboard" className="group">
             <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
+              <Link href="/dashboard" className="group flex flex-col h-full">
                   <CardHeader className="p-6">
                        <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
                           <History className="size-8 text-primary group-hover:text-accent-foreground"/>
@@ -60,8 +60,8 @@ export default function WelcomePage() {
                   <CardContent className="flex-grow text-center p-6 pt-0">
                       <p>Review your past plant analyses and track their progress over time.</p>
                   </CardContent>
+              </Link>
             </Card>
-          </Link>
         </div>
     </div>
   );
