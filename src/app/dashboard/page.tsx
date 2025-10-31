@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { History, LineChart as LineChartIcon, Leaf } from "lucide-react";
+import { History, LineChart as LineChartIcon, Leaf, Award } from "lucide-react";
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
@@ -11,6 +11,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "
 import { LineChart, CartesianGrid, XAxis, Line, Tooltip } from "recharts";
 import { useMemo } from "react";
 import Link from "next/link";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 
 const chartConfig = {
   health: {
@@ -19,6 +21,38 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount: number }) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-4">
+          <Avatar className="h-16 w-16 border-2 border-primary">
+            <AvatarFallback className="bg-secondary text-primary text-2xl font-bold">
+                {user.displayName ? user.displayName.charAt(0) : 'G'}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle className="font-headline text-3xl">{user.displayName || "Gardener"}</CardTitle>
+            <CardDescription>Tracking {analysesCount} plants</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <Award className="size-5 text-accent"/>
+                    <span className="font-semibold">Gardener Rank</span>
+                </div>
+                <span className="font-bold text-primary">Plant Novice</span>
+            </div>
+            <Progress value={25} />
+            <p className="text-xs text-muted-foreground text-center">250 XP to next rank</p>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 function HealthChart({ analyses }: { analyses: any[] }) {
   const chartData = useMemo(() => {
@@ -34,13 +68,17 @@ function HealthChart({ analyses }: { analyses: any[] }) {
 
   if (chartData.length < 2) {
     return (
-      <Alert>
-         <Leaf className="h-4 w-4" />
-        <AlertTitle>Not Enough Data for a Chart</AlertTitle>
-        <AlertDescription>
-          Save at least two analyses to see a health trend chart for your plants.
-        </AlertDescription>
-      </Alert>
+      <Card className="h-full flex flex-col justify-center">
+        <CardContent>
+          <Alert>
+            <Leaf className="h-4 w-4" />
+            <AlertTitle>Not Enough Data for a Chart</AlertTitle>
+            <AlertDescription>
+              Save at least two analyses to see a health trend chart for your plants.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -61,8 +99,10 @@ function HealthChart({ analyses }: { analyses: any[] }) {
             accessibilityLayer
             data={chartData}
             margin={{
+              top: 10,
               left: 12,
               right: 12,
+              bottom: 10
             }}
           >
             <CartesianGrid vertical={false} />
@@ -115,21 +155,28 @@ function PlantGallery() {
     return <p>Loading history...</p>;
   }
 
-  if (!pastAnalyses || pastAnalyses.length === 0) {
+  if (!user || !pastAnalyses || pastAnalyses.length === 0) {
     return (
-       <Alert>
-        <AlertTitle className="font-headline">No History Yet</AlertTitle>
-        <AlertDescription>
-          You haven't saved any plant analyses. Go to the AI Analysis page to get started!
-        </AlertDescription>
-      </Alert>
+       <div className="col-span-full">
+        <Alert>
+          <AlertTitle className="font-headline">No History Yet</AlertTitle>
+          <AlertDescription>
+            You haven't saved any plant analyses. Go to the AI Analysis page to get started!
+          </AlertDescription>
+        </Alert>
+       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <HealthChart analyses={pastAnalyses} />
-      <div>
+    <>
+    <div className="col-span-1 md:col-span-2">
+      <div className="grid grid-cols-1 gap-8">
+        <GardenerProfileCard user={user} analysesCount={pastAnalyses.length} />
+        <HealthChart analyses={pastAnalyses} />
+      </div>
+    </div>
+    <div className="col-span-1 md:col-span-3">
         <h2 className="font-headline text-2xl mb-4">Analysis History</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {pastAnalyses.map((analysis) => (
@@ -156,7 +203,7 @@ function PlantGallery() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -170,7 +217,9 @@ export default function HistoryPage() {
           <p className="text-muted-foreground">Review your saved plant analyses and track their growth.</p>
         </div>
       </div>
-      <PlantGallery />
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <PlantGallery />
+      </div>
     </div>
   );
 }

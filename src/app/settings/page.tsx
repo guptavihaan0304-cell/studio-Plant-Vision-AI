@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, BrainCircuit, Camera, Heart, Shield, Cog, Paintbrush, Moon, Sun, Laptop } from "lucide-react";
+import { Settings as SettingsIcon, BrainCircuit, Camera, Heart, Shield, Cog, Paintbrush, Moon, Sun, Laptop, User } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [skillLevel, setSkillLevel] = useState("beginner");
   const [isPetSafe, setIsPetSafe] = useState(true);
   const [isChildSafe, setIsChildSafe] = useState(true);
+  const [userSkill, setUserSkill] = useState("gardener");
 
   const handleSaveChanges = () => {
     toast({
@@ -119,6 +120,31 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="child-safe">Child-Safe Toxicity Alert</Label>
                   <Switch id="child-safe" checked={isChildSafe} onCheckedChange={setIsChildSafe} />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-5">
+              <AccordionTrigger className="font-headline text-xl">
+                <div className="flex items-center gap-3">
+                  <User className="size-6 text-primary" />
+                  <span>Profile & Customization</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground pl-9 space-y-6 pt-4">
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="user-skill" className="flex-1">Your Skill Level</Label>
+                    <Select value={userSkill} onValueChange={setUserSkill}>
+                        <SelectTrigger className="w-[180px]" id="user-skill">
+                        <SelectValue placeholder="Select your skill level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="gardener">Gardener</SelectItem>
+                        <SelectItem value="farmer">Farmer</SelectItem>
+                        <SelectItem value="botanist">Botanist</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
               </AccordionContent>
             </AccordionItem>
