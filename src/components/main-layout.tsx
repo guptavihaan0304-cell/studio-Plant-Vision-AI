@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, History, MessageSquare, Home, Cog } from 'lucide-react';
+import { Leaf, Bot, History, MessageSquare, Home, Cog, Settings } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -98,6 +98,18 @@ export function MainLayout({ children }: { children: ReactNode }) {
                 <Link href="/how-it-works">
                   <Cog />
                   <span>How It Works</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === '/settings'}
+                tooltip={{ children: 'Settings' }}
+              >
+                <Link href="/settings">
+                  <Settings />
+                  <span>Settings</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
