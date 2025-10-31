@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, History, MessageSquare, Home, Cog, Settings } from 'lucide-react';
+import { Leaf, Bot, History, MessageSquare, Home, Cog, Settings, Trophy } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -88,6 +88,18 @@ export function MainLayout({ children }: { children: ReactNode }) {
                   <span>{translations.history}</span>
                 </Link>
               </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+                <SidebarMenuButton
+                    asChild
+                    isActive={pathname === '/leaderboard'}
+                    tooltip={{ children: 'Leaderboard' }}
+                >
+                    <Link href="/leaderboard">
+                        <Trophy />
+                        <span>Leaderboard</span>
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton
