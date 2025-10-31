@@ -122,6 +122,47 @@
         "copyrightYear",
         "licenseType"
       ]
+    },
+    "GrowthTracker": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GrowthTracker",
+      "type": "object",
+      "description": "Stores growth tracking notes for a specific plant analysis.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the growth tracker record."
+        },
+        "analysisId": {
+          "type": "string",
+          "description": "Reference to the PlantAnalysis this note belongs to."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The user who owns this note."
+        },
+        "noteDate": {
+          "type": "string",
+          "description": "Date and time the note was created.",
+          "format": "date-time"
+        },
+        "note": {
+          "type": "string",
+          "description": "The text content of the growth note."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Optional image URL associated with the note.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "analysisId",
+        "userId",
+        "noteDate",
+        "note"
+      ]
     }
   },
   "auth": {
@@ -169,6 +210,30 @@
         }
       },
       {
+        "path": "/users/{userId}/plantAnalyses/{plantAnalysisId}/growthTrackers/{growthTrackerId}",
+        "definition": {
+          "entityName": "GrowthTracker",
+          "schema": {
+            "$ref": "#/backend/entities/GrowthTracker"
+          },
+          "description": "Stores growth tracking notes for a specific plant analysis. Ownership is inherited from the parent plantAnalysis.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user account."
+            },
+            {
+              "name": "plantAnalysisId",
+              "description": "The unique identifier for the plant analysis record."
+            },
+            {
+              "name": "growthTrackerId",
+              "description": "The unique identifier for the growth tracker record."
+            }
+          ]
+        }
+      },
+      {
         "path": "/copyright/info",
         "definition": {
           "entityName": "CopyrightInformation",
@@ -179,6 +244,6 @@
         }
       }
     ],
-    "reasoning": "This Firestore structure prioritizes security, scalability, and debuggability, following the core design principles of Authorization Independence, Clarity of Intent, DBAC (Database Based Access Control), and QAPs (Rules are not Filters). It leverages denormalization to avoid `get()` calls in security rules, ensures all documents in a collection share the same security requirements, and employs consistent access modeling.\n\n**Explanation:**\n\n*   **User Accounts:** User data is stored in `/users/{userId}`, enabling path-based ownership for user-specific data. This allows simple security rules to ensure only the user can access their own data.\n*   **Plant Analysis Results:** Plant analysis results are stored under `/users/{userId}/plantAnalyses/{plantAnalysisId}`, establishing a hierarchical relationship. The `userAccountId` field within each `PlantAnalysis` document ensures that the analysis is tied to the correct user, reinforcing data integrity and ownership.\n*   **Copyright Information:** Copyright information is stored in a single document `/copyright/info`. This is a singleton pattern, ensuring that only one copyright document exists. Access to the copyright information is public, so specific rules are not needed to limit access.\n\n**Authorization Independence:** The `PlantAnalysis` entity includes the `userAccountId` field, which is a denormalized copy of the user ID. This eliminates the need for security rules to perform `get()` operations on the `/users/{userId}` document to verify ownership.\n\n**QAPs Support:** The structure is designed to support secure `list` operations.  Since Plant Analysis are nested under each user, listing plant analyses is secure, as the security rules will only return results for the user accessing their own plant analyses.\n\n**Justification for choice of data structure**: The nested data structure for users and plant analyses offers a high level of security. Furthermore, it ensures that querying for plant analyses is efficient. The chosen data structure directly aligns with the application's requirements and the core design principles."
+    "reasoning": "This Firestore structure prioritizes security, scalability, and debuggability, following the core design principles of Authorization Independence, Clarity of Intent, DBAC (Database Based Access Control), and QAPs (Rules are not Filters). It leverages denormalization to avoid `get()` calls in security rules, ensures all documents in a collection share the same security requirements, and employs consistent access modeling.\n\n**Explanation:**\n\n*   **User Accounts:** User data is stored in `/users/{userId}`, enabling path-based ownership for user-specific data. This allows simple security rules to ensure only the user can access their own data.\n*   **Plant Analysis Results:** Plant analysis results are stored under `/users/{userId}/plantAnalyses/{plantAnalysisId}`, establishing a hierarchical relationship. The `userAccountId` field within each `PlantAnalysis` document ensures that the analysis is tied to the correct user, reinforcing data integrity and ownership.\n*   **Growth Tracker:** Growth tracker notes are stored in a sub-collection `/users/{userId}/plantAnalyses/{plantAnalysisId}/growthTrackers/{growthTrackerId}`. This nesting ensures that growth notes are directly tied to a specific plant analysis and inherit ownership, making queries for a plant's entire history efficient and secure.\n*   **Copyright Information:** Copyright information is stored in a single document `/copyright/info`. This is a singleton pattern, ensuring that only one copyright document exists. Access to the copyright information is public, so specific rules are not needed to limit access.\n\n**Authorization Independence:** The `PlantAnalysis` entity includes the `userAccountId` field, which is a denormalized copy of the user ID. This eliminates the need for security rules to perform `get()` operations on the `/users/{userId}` document to verify ownership.\n\n**QAPs Support:** The structure is designed to support secure `list` operations.  Since Plant Analysis are nested under each user, listing plant analyses is secure, as the security rules will only return results for the user accessing their own plant analyses."
   }
 }

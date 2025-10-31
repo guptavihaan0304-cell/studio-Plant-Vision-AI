@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { LineChart, CartesianGrid, XAxis, Line, Tooltip } from "recharts";
 import { useMemo } from "react";
+import Link from "next/link";
 
 const chartConfig = {
   health: {
@@ -132,24 +133,26 @@ function PlantGallery() {
         <h2 className="font-headline text-2xl mb-4">Analysis History</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {pastAnalyses.map((analysis) => (
-            <Card key={analysis.id} className="overflow-hidden group">
-              <CardContent className="p-0">
-                <div className="overflow-hidden">
-                  <Image
-                    src={analysis.plantImageURI}
-                    alt={analysis.plantName}
-                    width={400}
-                    height={300}
-                    className="object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col items-start p-4">
-                <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
-                <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
-                <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
-              </CardFooter>
-            </Card>
+            <Link href={`/growth-tracker/${analysis.id}`} key={analysis.id}>
+              <Card className="overflow-hidden group h-full">
+                <CardContent className="p-0">
+                  <div className="overflow-hidden">
+                    <Image
+                      src={analysis.plantImageURI}
+                      alt={analysis.plantName}
+                      width={400}
+                      height={300}
+                      className="object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-col items-start p-4">
+                  <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
+                  <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
+                  <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
+                </CardFooter>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>

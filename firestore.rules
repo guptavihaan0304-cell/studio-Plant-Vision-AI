@@ -7,11 +7,12 @@
  * Data Structure:
  * - User accounts are stored under `/users/{userId}`.
  * - Plant analysis results are nested under `/users/{userId}/plantAnalyses/{plantAnalysisId}`.
+ * - Growth tracker notes are nested under `/users/{userId}/plantAnalyses/{plantAnalysisId}/growthTrackers/{growthTrackerId}`.
  * - Copyright information is stored in a singleton document at `/copyright/info`.
  *
  * Key Security Decisions:
- * - Users can only create, update, or delete their own user account data and plant analysis results.
- * - Listing plant analysis results is restricted to the owning user.
+ * - Users can only create, update, or delete their own user account data, plant analysis results, and growth notes.
+ * - Listing data is restricted to the owning user.
  * - Copyright information is publicly readable but not writable.
  * - The `userAccountId` field is denormalized into the `PlantAnalysis` document to allow rules to validate ownership without extra reads.
  */
@@ -62,11 +63,23 @@ service cloud.firestore {
         return isOwner(userId) && resource != null && resource.data.userAccountId == userId;
       }
 
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
+      allow get, list: if isOwner(userId);
       allow create: if isOwner(userId) && request.resource.data.userAccountId == userId;
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Enforces user-ownership for growth tracker documents.
+       * @path /users/{userId}/plantAnalyses/{plantAnalysisId}/growthTrackers/{growthTrackerId}
+       * @allow (create, list, get) Authenticated user accesses their own growth notes: request.auth.uid == userId
+       * @deny (create, list, get) Authenticated user attempts to access another user's growth notes: request.auth.uid != userId
+       * @principle Inherits ownership from the parent plant analysis document.
+       */
+      match /growthTrackers/{growthTrackerId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update, delete: if false; // Disallow updates and deletes for simplicity
+      }
     }
 
     /**
