@@ -1,7 +1,7 @@
 'use client';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Languages, Leaf, LogOut, Moon, Sun, User as UserIcon } from 'lucide-react';
+import { Languages, Sprout, LogOut, Moon, Sun, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,7 +78,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <SidebarTrigger className="md:hidden" />
         <Link href="/" className="flex items-center gap-2 md:hidden">
-            <Leaf className="text-primary size-6" />
+            <Sprout className="text-primary size-6" />
             <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
         </Link>
         {pathname === '/' && user && (

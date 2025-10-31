@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Bot, History, MessageSquare, Home, Cog, Settings, Trophy } from 'lucide-react';
+import { Sprout, Bot, History, MessageSquare, Home, Cog, Settings, Trophy } from 'lucide-react';
 import { Header } from './header';
 import { useUser } from '@/firebase';
 import { useLanguage } from '@/hooks/use-language';
@@ -34,7 +34,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
             <Link href="/" className="flex items-center gap-2">
-              <Leaf className="text-primary size-8" />
+              <Sprout className="text-primary size-8" />
               <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
             </Link>
           </div>

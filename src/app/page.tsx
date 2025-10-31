@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Leaf, Bot, History, MessageSquare } from 'lucide-react';
+import { Sprout, Bot, History, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -48,7 +48,7 @@ export default function WelcomePage() {
             </Carousel>
             
             <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-6 shadow-lg">
-                <Leaf className="size-16 text-primary" />
+                <Sprout className="size-16 text-primary" />
             </div>
             <h1 className="text-5xl font-bold font-headline text-primary mb-4">
                 Welcome to PlantVision AI
