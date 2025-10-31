@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection } from 'firebase/firestore';
+import { CameraScan } from '@/components/camera-scan';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type AnalysisState = {
   identification: IdentifyPlantSpeciesOutput['plantIdentification'] | null;
@@ -32,16 +34,17 @@ export default function AnalysisPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        const imageDataUri = reader.result as string;
+        setImagePreview(imageDataUri);
         setAnalysis(null);
-        handleAnalysis(reader.result as string);
+        handleAnalysis(imageDataUri);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleBookmark = () => {
-    if (!user || !analysis || !analysis.identification || !firestore) {
+    if (!user || !analysis || !analysis.identification || !analysis.diagnosis || !firestore) {
       toast({
         variant: 'destructive',
         title: 'Not signed in',
@@ -55,7 +58,7 @@ export default function AnalysisPage() {
       plantName: analysis.identification.commonName,
       scientificName: analysis.identification.scientificName,
       analysisDate: new Date().toISOString(),
-      identifiedDiseases: [analysis.diagnosis?.diagnosis || 'N/A'],
+      identifiedDiseases: [analysis.diagnosis.diagnosis.primaryDiagnosis],
       remedySuggestions: analysis.remedies?.remedies || 'N/A',
       plantImageURI: imagePreview,
     };
@@ -72,6 +75,7 @@ export default function AnalysisPage() {
   const handleAnalysis = async (imageDataUri: string) => {
     setIsLoading(true);
     setAnalysis(null);
+    setImagePreview(imageDataUri);
 
     try {
       const [identificationResult, diagnosisResult] = await Promise.all([
@@ -85,7 +89,7 @@ export default function AnalysisPage() {
       
       const remediesResult = await suggestPlantCareRemedies({
           plantName: identificationResult.plantIdentification.commonName,
-          diagnosis: diagnosisResult.diagnosis
+          diagnosis: diagnosisResult.diagnosis.primaryDiagnosis
       });
       
       const newAnalysis = {
@@ -95,26 +99,6 @@ export default function AnalysisPage() {
       };
 
       setAnalysis(newAnalysis);
-
-       if (user && firestore) {
-          const analysisData = {
-            userAccountId: user.uid,
-            plantName: newAnalysis.identification.commonName,
-            scientificName: newAnalysis.identification.scientificName,
-            analysisDate: new Date().toISOString(),
-            identifiedDiseases: [newAnalysis.diagnosis?.diagnosis || 'N/A'],
-            remedySuggestions: newAnalysis.remedies?.remedies || 'N/A',
-            plantImageURI: imageDataUri,
-          };
-          const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');
-          addDocumentNonBlocking(collectionRef, analysisData);
-
-          toast({
-            title: 'Analysis Saved',
-            description: 'Your plant analysis has been automatically saved.',
-          });
-      }
-
 
     } catch (error) {
       console.error('Analysis failed:', error);
@@ -142,54 +126,85 @@ export default function AnalysisPage() {
           </div>
           <CardTitle className="font-headline text-3xl mt-4">AI Plant Analysis</CardTitle>
           <CardDescription className="max-w-md mx-auto">
-            Upload a photo of your plant, and our AI will identify it, diagnose any issues, and suggest care remedies.
+            Use your camera or upload a photo, and our AI will identify your plant, diagnose any issues, and suggest care remedies.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div
-            className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[250px] cursor-pointer hover:bg-secondary/50 transition-colors"
-            onClick={handleUploadClick}
-          >
-            <input
-              id="plant-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-              disabled={isLoading}
-            />
-            {isLoading ? (
-              <div className="flex flex-col items-center gap-4 text-muted-foreground">
-                <Loader2 className="size-12 animate-spin text-primary" />
-                <p className="font-semibold font-headline">Analyzing your plant...</p>
-                <p className="text-sm">This may take a moment. Please wait.</p>
+          <Tabs defaultValue="camera" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="camera">Camera Scan</TabsTrigger>
+              <TabsTrigger value="upload">Upload Image</TabsTrigger>
+            </TabsList>
+            <TabsContent value="camera">
+              <div className="p-4 border-dashed border-2 border-primary/50 rounded-lg min-h-[300px]">
+                <CameraScan onCapture={handleAnalysis} disabled={isLoading} />
               </div>
-            ) : imagePreview ? (
-              <div className="relative w-full max-w-sm">
-                <Image
-                  src={imagePreview}
-                  alt="Plant preview"
-                  width={400}
-                  height={400}
-                  className="rounded-lg object-contain max-h-[300px]"
-                />
-              </div>
-            ) : (
-              <>
-                <UploadCloud className="size-12 text-primary/80" />
-                <p className="text-lg font-semibold font-headline">Click or drag to upload an image</p>
-                <p className="text-muted-foreground">For best results, use a clear, well-lit photo.</p>
-                <Button disabled={isLoading} onClick={handleUploadClick} >
-                  {isLoading ? 'Loading...' : 'Upload Image'}
-                </Button>
-              </>
-            )}
-          </div>
+            </TabsContent>
+            <TabsContent value="upload">
+                <div
+                    className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
+                    onClick={handleUploadClick}
+                >
+                    <input
+                    id="plant-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    disabled={isLoading}
+                    />
+                    <UploadCloud className="size-12 text-primary/80" />
+                    <p className="text-lg font-semibold font-headline">Click or drag to upload an image</p>
+                    <p className="text-muted-foreground">For best results, use a clear, well-lit photo.</p>
+                    <Button disabled={isLoading} onClick={handleUploadClick} >
+                    {isLoading ? 'Loading...' : 'Upload Image'}
+                    </Button>
+                </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
+      
+      {isLoading && (
+          <Card className="mt-8 text-center">
+              <CardContent className="p-8">
+                <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                    <Loader2 className="size-12 animate-spin text-primary" />
+                    <p className="font-semibold font-headline">Analyzing your plant...</p>
+                    <p className="text-sm">This may take a moment. Please wait.</p>
+                    {imagePreview && 
+                      <Image 
+                        src={imagePreview}
+                        alt="Analyzing plant"
+                        width={200}
+                        height={200}
+                        className="rounded-lg object-contain mt-4"
+                      />
+                    }
+                </div>
+              </CardContent>
+          </Card>
+      )}
 
-      {analysis && (
+      {analysis && imagePreview && !isLoading && (
         <div className="mt-8 space-y-8">
+           <Card>
+              <CardHeader>
+                  <CardTitle className="font-headline text-2xl">Analysis Complete</CardTitle>
+              </CardHeader>
+              <CardContent>
+                   <div className="relative w-full max-w-sm mx-auto">
+                      <Image
+                        src={imagePreview}
+                        alt="Plant preview"
+                        width={400}
+                        height={400}
+                        className="rounded-lg object-contain max-h-[300px]"
+                      />
+                    </div>
+              </CardContent>
+           </Card>
+          
           <Card className="shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-start gap-4">
@@ -199,12 +214,10 @@ export default function AnalysisPage() {
                     <CardDescription>Species & Care Information</CardDescription>
                   </div>
                 </div>
-                {!user && (
-                  <Button variant="ghost" size="icon" onClick={handleBookmark} title="Save analysis">
-                    <Bookmark className="size-6" />
-                    <span className="sr-only">Save Analysis</span>
-                  </Button>
-                )}
+                <Button variant="ghost" size="icon" onClick={handleBookmark} title="Save analysis">
+                  <Bookmark className="size-6" />
+                  <span className="sr-only">Save Analysis</span>
+                </Button>
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-x-6 gap-y-4 text-left">
                 {analysis.identification && (
@@ -241,8 +254,27 @@ export default function AnalysisPage() {
                   <CardDescription>AI-powered disease and deficiency detection.</CardDescription>
                 </div>
               </CardHeader>
-              <CardContent className="text-left space-y-2">
-                <p>{analysis.diagnosis.diagnosis}</p>
+              <CardContent className="text-left space-y-4">
+                <div>
+                  <h4 className="font-bold">Diagnosis</h4>
+                  <p>{analysis.diagnosis.diagnosis.primaryDiagnosis}</p>
+                </div>
+                <div>
+                  <h4 className="font-bold">Confidence</h4>
+                  <p>{analysis.diagnosis.diagnosis.confidence}</p>
+                </div>
+                 <div>
+                  <h4 className="font-bold">Reasoning</h4>
+                  <p className="text-muted-foreground">{analysis.diagnosis.diagnosis.reasoning}</p>
+                </div>
+                {analysis.diagnosis.diagnosis.possibleOtherDiseases && analysis.diagnosis.diagnosis.possibleOtherDiseases.length > 0 && (
+                  <div>
+                    <h4 className="font-bold">Other Possibilities</h4>
+                    <ul className="list-disc list-inside text-muted-foreground">
+                      {analysis.diagnosis.diagnosis.possibleOtherDiseases.map((disease, i) => <li key={i}>{disease}</li>)}
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
