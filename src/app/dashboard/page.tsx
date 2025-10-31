@@ -235,7 +235,7 @@ function PlantGallery() {
     <div className="col-span-1 md:col-span-2">
       <div className="grid grid-cols-1 gap-8">
         <GardenerProfileCard user={user} analysesCount={analyses.length} />
-        {analyses.length > 0 && <HealthChart analyses={analyses} />}
+        <HealthChart analyses={analyses} />
       </div>
     </div>
     <div className="col-span-1 md:col-span-3">

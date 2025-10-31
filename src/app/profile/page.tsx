@@ -24,9 +24,8 @@ import { Separator } from '@/components/ui/separator';
 import { signOut } from 'firebase/auth';
 import { SettingsPageContent } from '@/components/settings-content';
 
-export default function ProfilePage() {
+function AuthComponent() {
   const auth = useAuth();
-  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
@@ -36,16 +35,6 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [awaitingVerification, setAwaitingVerification] = useState(false);
-  
-  const [hasCheckedUser, setHasCheckedUser] = useState(false);
-
-  useEffect(() => {
-    if (!isUserLoading) {
-      setHasCheckedUser(true);
-      // No automatic redirect, this page serves both logged in and logged out users
-    }
-  }, [user, isUserLoading]);
-
 
   const handleAnonymousSignIn = async () => {
     setIsLoading(true);
@@ -107,25 +96,13 @@ export default function ProfilePage() {
         }
     }
   };
-  
-  if (isUserLoading || !hasCheckedUser) {
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <Loader2 className="size-12 animate-spin text-primary" />
-        </div>
-    )
-  }
 
-  if(user && !user.isAnonymous) {
-    return <SettingsPageContent />;
-  }
-  
   if (awaitingVerification) {
       return (
          <div className="flex items-center justify-center min-h-screen p-4">
           <Card className="w-full max-w-md mx-auto glassmorphic-panel text-center">
              <CardHeader>
-                <div className="mx-auto bg-primary/20 p-3 rounded-full w-fit mb-4 soft-glow">
+                <div className="mx-auto bg-primary/20 p-3 rounded-full w-fit soft-glow">
                   <MailCheck className="text-primary size-10" />
                 </div>
                 <CardTitle className="font-headline text-3xl text-primary">Verify Your Email</CardTitle>
@@ -154,7 +131,7 @@ export default function ProfilePage() {
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md mx-auto glassmorphic-panel">
         <CardHeader className="text-center">
-            <div className="mx-auto bg-primary/20 p-3 rounded-full w-fit mb-4 soft-glow">
+            <div className="mx-auto bg-primary/20 p-3 rounded-full w-fit soft-glow">
               <Sprout className="text-primary size-10" />
             </div>
           <CardTitle className="font-headline text-3xl text-primary">
@@ -264,4 +241,23 @@ export default function ProfilePage() {
       </Card>
     </div>
   );
+}
+
+
+export default function ProfilePage() {
+  const { user, isUserLoading } = useUser();
+  
+  if (isUserLoading) {
+    return (
+        <div className="flex items-center justify-center min-h-screen">
+            <Loader2 className="size-12 animate-spin text-primary" />
+        </div>
+    )
+  }
+
+  if (user && !user.isAnonymous) {
+    return <SettingsPageContent />;
+  }
+
+  return <AuthComponent />;
 }

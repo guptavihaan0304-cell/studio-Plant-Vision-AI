@@ -8,17 +8,17 @@ import { cn } from '@/lib/utils';
 import { useFirebase } from '@/firebase';
 
 const navItems = [
-  { href: '/', icon: Home, label: 'Home' },
-  { href: '/analysis', icon: Scan, label: 'Scan' },
-  { href: '/dashboard', icon: Leaf, label: 'Plants' },
-  { href: '/assistant', icon: MessageCircleQuestion, label: 'Tips' },
-  { href: '/profile', icon: User, label: 'Profile' },
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/analysis', label: 'Scan', icon: Scan },
+  { href: '/dashboard', label: 'Plants', icon: Leaf },
+  { href: '/assistant', label: 'Tips', icon: MessageCircleQuestion },
+  { href: '/profile', label: 'Profile', icon: User },
 ];
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, isUserLoading } = useFirebase();
   
+  // The bottom nav should be shown on the main pages of the app.
   const showBottomNav = navItems.some(item => item.href === pathname);
 
   return (
