@@ -36,9 +36,7 @@ export function Header() {
 
   const handleSignOut = async () => {
     await signOut(auth);
-    // After signing out, explicitly push to the login page.
-    // This is more reliable than waiting for a listener to redirect.
-    router.push('/login');
+    router.push('/profile');
   };
   
   const handleLanguageSelect = async (language: string) => {
@@ -166,7 +164,7 @@ export function Header() {
                 </DropdownMenuItem>
               </>
             ) : (
-               <DropdownMenuItem onClick={() => router.push('/login')}>
+               <DropdownMenuItem onClick={() => router.push('/profile')}>
                   <UserIcon className="mr-2 h-4 w-4" />
                   <span>{translations.loginSignUp}</span>
                 </DropdownMenuItem>
@@ -177,3 +175,5 @@ export function Header() {
     </header>
   );
 }
+
+    

@@ -53,21 +53,19 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
   }, [analysisRef]);
   
   const timelineItems = useMemo(() => {
-    // Don't compute until both are done loading
-    if (isLoadingNotes || isLoadingAnalysis) {
-      return null;
+    const combinedItems = [];
+    if (notes) {
+        combinedItems.push(...notes.map(note => ({ ...note, type: 'note', date: note.noteDate })));
     }
-    
-    const combinedItems = [
-      ...(notes || []).map(note => ({ ...note, type: 'note', date: note.noteDate })),
-      ...(initialAnalysis ? [{...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate}] : [])
-    ];
+    if (initialAnalysis) {
+        combinedItems.push({ ...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate });
+    }
     
     // Sort items by date, newest first
     return combinedItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [notes, initialAnalysis, isLoadingNotes, isLoadingAnalysis]);
+  }, [notes, initialAnalysis]);
 
-  if (timelineItems === null) {
+  if (isLoadingNotes || isLoadingAnalysis) {
     return <p>Loading timeline...</p>;
   }
 
@@ -125,3 +123,5 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     </div>
   );
 }
+
+    

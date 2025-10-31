@@ -18,8 +18,7 @@ const navItems = [
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   
-  // The bottom nav should be shown on the main pages of the app.
-  const showBottomNav = navItems.some(item => item.href === pathname);
+  const showBottomNav = !pathname.startsWith('/login');
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -53,3 +52,5 @@ export function MainLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+    

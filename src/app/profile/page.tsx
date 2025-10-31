@@ -117,7 +117,9 @@ function AuthComponent() {
                  <Button variant="outline" className="w-full rounded-full" onClick={() => {
                      setAwaitingVerification(false);
                      setIsSigningUp(false);
-                     signOut(auth);
+                     if (auth.currentUser) {
+                       signOut(auth);
+                     }
                  }}>
                     Back to Login
                  </Button>
@@ -246,8 +248,15 @@ function AuthComponent() {
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
+  const [authChecked, setAuthChecked] = useState(false);
   
-  if (isUserLoading) {
+  useEffect(() => {
+    if (!isUserLoading) {
+        setAuthChecked(true);
+    }
+  }, [isUserLoading]);
+
+  if (!authChecked) {
     return (
         <div className="flex items-center justify-center min-h-screen">
             <Loader2 className="size-12 animate-spin text-primary" />
@@ -261,3 +270,5 @@ export default function ProfilePage() {
 
   return <AuthComponent />;
 }
+
+    

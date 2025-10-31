@@ -44,9 +44,9 @@ export default function LoginPage() {
     if (!isUserLoading) {
       setHasCheckedUser(true);
       if (user) {
-        if (user.isAnonymous) {
-          router.push('/dashboard');
-        } else if (user.emailVerified) {
+        // Redirect verified, non-anonymous users to the dashboard.
+        // Anonymous users or those pending verification can stay on /login if they need to sign up/in properly.
+        if (!user.isAnonymous && user.emailVerified) {
           router.push('/dashboard');
         }
       }
@@ -113,7 +113,8 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading || !hasCheckedUser) {
+  // Display a loading spinner until the initial user check is complete.
+  if (!hasCheckedUser) {
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
             <Loader2 className="size-12 animate-spin text-primary" />
@@ -141,7 +142,9 @@ export default function LoginPage() {
                  <Button variant="outline" className="w-full" onClick={() => {
                      setAwaitingVerification(false);
                      setIsSigningUp(false);
-                     signOut(auth); // Clear any partial auth state
+                     if (auth.currentUser) {
+                        signOut(auth); // Clear any partial auth state
+                     }
                  }}>
                     Back to Login
                  </Button>
@@ -266,5 +269,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
 
     

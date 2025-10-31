@@ -199,7 +199,10 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               type="monotone"
               stroke="url(#healthGradient)"
               strokeWidth={3}
-              dot={({ key, ...props }) => <circle key={key} {...props} r={5} fill="hsl(var(--primary))" />}
+              dot={({ key, ...props }) => {
+                const { key: e, ...rest } = props;
+                return <circle key={key} {...rest} r={5} fill="hsl(var(--primary))" />;
+              }}
             />
             <defs>
                 <linearGradient id="healthGradient" x1="0" y1="0" x2="1" y2="0">
@@ -304,3 +307,5 @@ export default function PlantsPage() {
     </div>
   );
 }
+
+    
