@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { History, LineChart as LineChartIcon, Leaf, Award } from "lucide-react";
+import { History, LineChart as LineChartIcon, Leaf, Award, User } from "lucide-react";
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
@@ -58,39 +58,39 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
     
   if (!user || user.isAnonymous) {
       return (
-        <Card>
+        <Card className="glassmorphic-panel">
             <CardHeader>
-                <CardTitle className="font-headline text-3xl">Create a Profile</CardTitle>
+                <CardTitle className="font-headline text-2xl text-primary">Create a Profile</CardTitle>
                 <CardDescription>Sign up to track your plants and earn rewards!</CardDescription>
             </CardHeader>
             <CardContent>
-                <Alert>
-                    <Leaf className="h-4 w-4" />
-                    <AlertTitle>Welcome, Guest!</AlertTitle>
+                <Alert className="bg-secondary/20 border-secondary/50">
+                    <Leaf className="h-4 w-4 text-primary" />
+                    <AlertTitle className="text-primary/90">Welcome, Guest!</AlertTitle>
                     <AlertDescription>
                         Create an account to save your plant analyses, track their growth, and level up your gardener rank.
                     </AlertDescription>
                 </Alert>
             </CardContent>
             <CardFooter>
-                 <Button asChild className="w-full">
-                    <Link href="/login">Sign Up / Login</Link>
+                 <Button asChild className="w-full rounded-full glow-effect">
+                    <Link href="/profile">Sign Up / Login</Link>
                 </Button>
             </CardFooter>
         </Card>
       )
   }
   return (
-    <Card>
+    <Card className="glassmorphic-panel">
       <CardHeader>
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16 border-2 border-primary">
+          <Avatar className="h-16 w-16 border-2 border-primary glow-effect">
             <AvatarFallback className="bg-secondary text-primary text-2xl font-bold">
-                {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'G'}
+                {user.displayName ? user.displayName.charAt(0).toUpperCase() : <User />}
             </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="font-headline text-3xl">{user.displayName || "Gardener"}</CardTitle>
+            <CardTitle className="font-headline text-3xl text-primary">{user.displayName || "Gardener"}</CardTitle>
             <CardDescription>Tracking {analysesCount} {analysesCount === 1 ? 'plant' : 'plants'}</CardDescription>
           </div>
         </div>
@@ -99,12 +99,12 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
         <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                    <Award className="size-5 text-accent"/>
-                    <span className="font-semibold">Gardener Rank</span>
+                    <Award className="size-5 text-primary"/>
+                    <span className="font-semibold">Rank</span>
                 </div>
                 <span className="font-bold text-primary">{rankName}</span>
             </div>
-            <Progress value={progress} />
+            <Progress value={progress} className="h-2"/>
             <p className="text-xs text-muted-foreground text-center">
                 {xpToNext > 0 ? `${xpToNext} XP to next rank` : "You've reached the highest rank!"}
             </p>
@@ -128,11 +128,11 @@ function HealthChart({ analyses }: { analyses: any[] }) {
 
   if (chartData.length < 1) {
     return (
-      <Card className="h-full flex flex-col justify-center">
+      <Card className="h-full flex flex-col justify-center glassmorphic-panel">
         <CardContent>
-          <Alert>
-            <Leaf className="h-4 w-4" />
-            <AlertTitle>Not Enough Data</AlertTitle>
+          <Alert className="bg-secondary/20 border-secondary/50">
+            <Leaf className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary/90">Not Enough Data</AlertTitle>
             <AlertDescription>
               Save at least one analysis to see a health trend chart for your plants.
             </AlertDescription>
@@ -142,16 +142,15 @@ function HealthChart({ analyses }: { analyses: any[] }) {
     )
   }
   
-  // If there's only one data point, we need to provide a domain for the XAxis to render it.
   const xAxisDomain = chartData.length === 1 ? [chartData[0].date, chartData[0].date] : undefined;
 
   return (
-    <Card>
+    <Card className="glassmorphic-panel">
       <CardHeader>
         <div className="flex items-center gap-4">
-          <LineChartIcon className="size-8 text-accent" />
+          <LineChartIcon className="size-8 text-primary" />
           <div>
-            <CardTitle className="font-headline text-3xl">Health Trend</CardTitle>
+            <CardTitle className="font-headline text-3xl text-primary">Health Trend</CardTitle>
             <CardDescription>Visualizing your plant's health over time.</CardDescription>
           </div>
         </div>
@@ -168,7 +167,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               bottom: 10
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)"/>
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -177,29 +176,37 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               tickFormatter={(value) => value}
               domain={xAxisDomain}
               type="category"
+              stroke="hsl(var(--foreground) / 0.6)"
             />
             <YAxis domain={[0, 100]} hide={true} />
             <Tooltip
-              cursor={false}
+              cursor={{ stroke: "hsl(var(--primary))", strokeWidth: 1, strokeDasharray: "3 3" }}
               content={<ChartTooltipContent 
                 indicator="line"
                 formatter={(value, name, item) => (
                   <div className="space-y-1">
-                    <p className="font-bold">{item.payload.plantName}</p>
+                    <p className="font-bold text-primary">{item.payload.plantName}</p>
                     <p>Health: {item.payload.diagnosis}</p>
                     <p className="text-muted-foreground text-xs">{item.payload.date}</p>
                   </div>
                 )}
                 hideLabel
+                className="glassmorphic-panel"
               />}
             />
             <Line
               dataKey="health"
               type="monotone"
-              stroke="var(--color-health)"
-              strokeWidth={2}
-              dot={true}
+              stroke="url(#healthGradient)"
+              strokeWidth={3}
+              dot={(props) => <circle {...props} r={5} fill="hsl(var(--primary))" />}
             />
+            <defs>
+                <linearGradient id="healthGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="hsl(var(--secondary))" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" />
+                </linearGradient>
+            </defs>
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -232,27 +239,27 @@ function PlantGallery() {
       </div>
     </div>
     <div className="col-span-1 md:col-span-3">
-        <h2 className="font-headline text-2xl mb-4">Analysis History</h2>
+        <h2 className="font-headline text-2xl mb-4 text-primary">My Plants</h2>
         {(!user || user.isAnonymous) && (
-             <Alert>
-              <AlertTitle className="font-headline">Sign Up to Track Your Plants</AlertTitle>
+             <Alert className="bg-secondary/20 border-secondary/50">
+              <AlertTitle className="font-headline text-primary/90">Sign Up to Track Your Plants</AlertTitle>
               <AlertDescription>
                 Create a free account to save your plant analyses and watch them grow over time. Your personal plant dashboard awaits!
               </AlertDescription>
             </Alert>
         )}
         {user && !user.isAnonymous && analyses.length === 0 && (
-             <Alert>
-              <AlertTitle className="font-headline">No History Yet</AlertTitle>
+             <Alert className="bg-secondary/20 border-secondary/50">
+              <AlertTitle className="font-headline text-primary/90">No Plants Yet</AlertTitle>
               <AlertDescription>
-                You haven't saved any plant analyses. Go to the AI Analysis page to get started!
+                You haven't saved any plant analyses. Go to the Scan page to get started!
               </AlertDescription>
             </Alert>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {user && !user.isAnonymous && analyses.map((analysis) => (
             <Link href={`/growth-tracker/${analysis.id}`} key={analysis.id}>
-              <Card className="overflow-hidden group h-full shadow-md hover:shadow-xl transition-shadow duration-300">
+              <Card className="overflow-hidden group h-full glassmorphic-panel hover:border-primary/80 transition-all duration-300">
                 <CardContent className="p-0">
                   <div className="overflow-hidden">
                     <Image
@@ -260,13 +267,13 @@ function PlantGallery() {
                       alt={analysis.plantName}
                       width={400}
                       height={300}
-                      className="object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col items-start p-4 bg-white dark:bg-card">
+                <CardFooter className="flex flex-col items-start p-4">
                   <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
-                  <h3 className="font-semibold mt-2 font-headline">{analysis.plantName}</h3>
+                  <h3 className="font-semibold mt-2 font-headline text-lg">{analysis.plantName}</h3>
                   <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
                 </CardFooter>
               </Card>
@@ -278,16 +285,16 @@ function PlantGallery() {
   );
 }
 
-export default function HistoryPage() {
+export default function PlantsPage() {
     const { user } = useFirebase();
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
       <div className="flex items-center gap-4">
-        <History className="size-8 text-accent" />
+        <History className="size-8 text-primary" />
         <div>
-          <h1 className="font-headline text-3xl">Dashboard</h1>
+          <h1 className="font-headline text-4xl text-primary">My Garden</h1>
           <p className="text-muted-foreground">
-             {user && !user.isAnonymous ? "Review your saved plant analyses and track their growth." : "Sign up to save and track your plants."}
+             Review your saved plant analyses and track their growth.
           </p>
         </div>
       </div>

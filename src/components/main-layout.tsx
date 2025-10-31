@@ -1,131 +1,55 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-} from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sprout, Bot, History, MessageSquare, Home, Cog, Settings } from 'lucide-react';
-import { Header } from './header';
-import { useUser } from '@/firebase';
-import { useLanguage } from '@/hooks/use-language';
+import { Home, Scan, Leaf, MessageCircleQuestion, User } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useFirebase } from '@/firebase';
+
+const navItems = [
+  { href: '/', icon: Home, label: 'Home' },
+  { href: '/analysis', icon: Scan, label: 'Scan' },
+  { href: '/dashboard', icon: Leaf, label: 'Plants' },
+  { href: '/assistant', icon: MessageCircleQuestion, label: 'Tips' },
+  { href: '/profile', icon: User, label: 'Profile' },
+];
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, isUserLoading } = useUser();
-  const { translations } = useLanguage();
-
-  // Do not render sidebar-dependent layout on the login page.
-  if (pathname === '/login') {
-    return <>{children}</>;
-  }
+  const { user, isUserLoading } = useFirebase();
+  
+  const showBottomNav = navItems.some(item => item.href === pathname);
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2 p-2">
-            <Link href="/" className="flex items-center gap-2">
-              <Sprout className="text-primary size-8" />
-              <h1 className="font-headline text-2xl font-bold text-foreground">PlantVision AI</h1>
-            </Link>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === '/'}
-                  tooltip={{ children: "Home" }}
-                >
-                  <Link href="/">
-                    <Home />
-                    <span>Home</span>
+    <div className="flex flex-col min-h-screen w-full">
+      <main className="flex-1 pb-24">{children}</main>
+      
+      {showBottomNav && (
+        <footer className="fixed bottom-0 left-0 right-0 z-50">
+          <nav className="mx-auto mb-4 max-w-md w-[calc(100%-2rem)] glassmorphic-panel p-2 rounded-full">
+            <div className="flex justify-around items-center">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link href={item.href} key={item.href} className="flex flex-col items-center justify-center gap-1 text-muted-foreground w-16 h-16 rounded-full transition-all duration-300 ease-in-out group">
+                    <div className={cn(
+                      "relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ease-in-out",
+                      isActive ? 'bg-primary/20' : 'group-hover:bg-primary/10'
+                    )}>
+                      <item.icon className={cn(
+                        "size-6 transition-all duration-300",
+                        isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/80'
+                      )} />
+                       {isActive && <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping -z-10"></span>}
+                    </div>
                   </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/analysis'}
-                tooltip={{ children: translations.aiAnalysis as string }}
-              >
-                <Link href="/analysis">
-                  <Bot />
-                  <span>{translations.aiAnalysis}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/assistant'}
-                tooltip={{ children: translations.aiAssistant as string }}
-              >
-                <Link href="/assistant">
-                  <MessageSquare />
-                  <span>{translations.aiAssistant}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/dashboard'}
-                tooltip={{ children: "Dashboard" }}
-              >
-                <Link href="/dashboard">
-                  <History />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/how-it-works'}
-                tooltip={{ children: 'How It Works' }}
-              >
-                <Link href="/how-it-works">
-                  <Cog />
-                  <span>How It Works</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/settings'}
-                tooltip={{ children: 'Settings' }}
-              >
-                <Link href="/settings">
-                  <Settings />
-                  <span>Settings</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <div className="flex flex-col min-h-screen w-full">
-        <SidebarInset>
-          <Header />
-          <main className="p-4 lg:p-6 flex-1">{children}</main>
-        </SidebarInset>
-        <footer className="p-4 text-center text-xs text-muted-foreground">
-            <div className="font-headline font-semibold mb-2">Growing plants smarter with AI.</div>
-            <div>&copy; 2025 PlantVision AI. All Rights Reserved.</div>
+                );
+              })}
+            </div>
+          </nav>
         </footer>
-      </div>
-    </SidebarProvider>
+      )}
+    </div>
   );
 }

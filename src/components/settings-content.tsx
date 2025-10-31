@@ -1,19 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, BrainCircuit, Camera, Heart, Shield, Cog, Paintbrush, Moon, Sun, Laptop, User } from "lucide-react";
+import { Settings as SettingsIcon, BrainCircuit, Heart, Shield, Paintbrush, Moon, Sun, Laptop, User, LogOut } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
-export default function SettingsPage() {
+
+export function SettingsPageContent() {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
+  const auth = useAuth();
+  const { user } = useUser();
+  const router = useRouter();
   
   // State for settings - in a real app, this would come from a user context or database
   const [aiScanAccuracy, setAiScanAccuracy] = useState("standard");
@@ -23,7 +31,6 @@ export default function SettingsPage() {
   const [skillLevel, setSkillLevel] = useState("beginner");
   const [isPetSafe, setIsPetSafe] = useState(true);
   const [isChildSafe, setIsChildSafe] = useState(true);
-  const [userSkill, setUserSkill] = useState("gardener");
 
   const handleSaveChanges = () => {
     toast({
@@ -32,19 +39,41 @@ export default function SettingsPage() {
     });
   };
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/profile');
+    toast({
+      title: "Signed Out",
+      description: "You have been successfully signed out.",
+    });
+  };
+
   return (
-    <div className="container mx-auto max-w-4xl py-8">
-      <Card className="shadow-lg">
+    <div className="container mx-auto max-w-2xl py-8">
+      <Card className="glassmorphic-panel">
         <CardHeader className="text-center">
-          <div className="mx-auto bg-secondary p-3 rounded-full w-fit">
+          <div className="mx-auto bg-primary/20 p-3 rounded-full w-fit soft-glow">
             <SettingsIcon className="size-10 text-primary" />
           </div>
-          <CardTitle className="font-headline text-4xl mt-4">Advanced Settings</CardTitle>
+          <CardTitle className="font-headline text-4xl text-primary mt-4">Profile & Settings</CardTitle>
           <CardDescription className="max-w-xl mx-auto">
-            Customize your PlantVision AI experience. Tailor the AI, scanning options, and care preferences to match your needs.
+            Customize your PlantVision AI experience and manage your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
+            {user && (
+                <div className="flex items-center gap-4 mb-8 p-4 bg-primary/5 rounded-lg">
+                     <Avatar className="h-16 w-16 border-2 border-primary glow-effect">
+                        <AvatarFallback className="bg-secondary text-primary text-2xl font-bold">
+                            {user.displayName ? user.displayName.charAt(0).toUpperCase() : <User />}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h3 className="text-xl font-bold font-headline">{user.displayName}</h3>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                </div>
+            )}
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
             <AccordionItem value="item-1">
               <AccordionTrigger className="font-headline text-xl">
@@ -57,7 +86,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="scan-accuracy" className="flex-1">AI Scan Accuracy</Label>
                   <Select value={aiScanAccuracy} onValueChange={setAiScanAccuracy}>
-                    <SelectTrigger className="w-[180px]" id="scan-accuracy">
+                    <SelectTrigger className="w-[180px] rounded-full" id="scan-accuracy">
                       <SelectValue placeholder="Select accuracy" />
                     </SelectTrigger>
                     <SelectContent>
@@ -93,7 +122,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="skill-level" className="flex-1">Gardening Skill Level</Label>
                   <Select value={skillLevel} onValueChange={setSkillLevel}>
-                    <SelectTrigger className="w-[180px]" id="skill-level">
+                    <SelectTrigger className="w-[180px] rounded-full" id="skill-level">
                       <SelectValue placeholder="Select your skill level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -124,31 +153,6 @@ export default function SettingsPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-5">
-              <AccordionTrigger className="font-headline text-xl">
-                <div className="flex items-center gap-3">
-                  <User className="size-6 text-primary" />
-                  <span>Profile & Customization</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="text-base text-muted-foreground pl-9 space-y-6 pt-4">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="user-skill" className="flex-1">Your Skill Level</Label>
-                    <Select value={userSkill} onValueChange={setUserSkill}>
-                        <SelectTrigger className="w-[180px]" id="user-skill">
-                        <SelectValue placeholder="Select your skill level" />
-                        </SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="gardener">Gardener</SelectItem>
-                        <SelectItem value="farmer">Farmer</SelectItem>
-                        <SelectItem value="botanist">Botanist</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
             <AccordionItem value="item-4">
               <AccordionTrigger className="font-headline text-xl">
                 <div className="flex items-center gap-3">
@@ -160,19 +164,23 @@ export default function SettingsPage() {
                  <div className="flex items-center justify-between">
                     <Label>Theme</Label>
                     <div className="flex items-center gap-2">
-                        <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTheme('light')}><Sun/></Button>
-                        <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTheme('dark')}><Moon/></Button>
-                        <Button variant={theme === 'system' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTheme('system')}><Laptop/></Button>
+                        <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" className="rounded-full" onClick={() => setTheme('light')}><Sun/></Button>
+                        <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="icon" className="rounded-full" onClick={() => setTheme('dark')}><Moon/></Button>
+                        <Button variant={theme === 'system' ? 'secondary' : 'ghost'} size="icon" className="rounded-full" onClick={() => setTheme('system')}><Laptop/></Button>
                     </div>
                  </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
-          <div className="mt-8 text-center">
-            <Button size="lg" onClick={handleSaveChanges}>Save Changes</Button>
-          </div>
         </CardContent>
+        <CardFooter className="flex-col gap-4 pt-8">
+            <Button size="lg" onClick={handleSaveChanges} className="w-full rounded-full glow-effect">Save Changes</Button>
+             <Button size="lg" variant="outline" onClick={handleSignOut} className="w-full rounded-full flex items-center gap-2">
+                <LogOut className="size-4"/>
+                Sign Out
+            </Button>
+          </CardFooter>
       </Card>
     </div>
   );
