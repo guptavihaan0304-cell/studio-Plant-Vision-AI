@@ -17,7 +17,7 @@ export default function WelcomePage() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
             </p>
-            <p className="text-md text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm font-bold font-headline text-muted-foreground max-w-2xl mx-auto">
               Scroll down and click the options you need
             </p>
         </div>
