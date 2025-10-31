@@ -180,44 +180,36 @@ function PlantGallery() {
     return <p>Loading history...</p>;
   }
 
-  if (!user || user.isAnonymous) {
-       return (
-       <div className="col-span-full md:col-span-3">
-        <Alert>
-          <AlertTitle className="font-headline">Sign Up to Track Your Plants</AlertTitle>
-          <AlertDescription>
-            Create a free account to save your plant analyses and watch them grow over time. Your personal plant dashboard awaits!
-          </AlertDescription>
-        </Alert>
-       </div>
-    )
-  }
-
-  if (!pastAnalyses || pastAnalyses.length === 0) {
-    return (
-       <div className="col-span-full md:col-span-3">
-        <Alert>
-          <AlertTitle className="font-headline">No History Yet</AlertTitle>
-          <AlertDescription>
-            You haven't saved any plant analyses. Go to the AI Analysis page to get started!
-          </AlertDescription>
-        </Alert>
-       </div>
-    )
-  }
+  const analyses = pastAnalyses || [];
 
   return (
     <>
     <div className="col-span-1 md:col-span-2">
       <div className="grid grid-cols-1 gap-8">
-        <GardenerProfileCard user={user} analysesCount={pastAnalyses.length} />
-        <HealthChart analyses={pastAnalyses} />
+        <GardenerProfileCard user={user} analysesCount={analyses.length} />
+        {analyses.length > 0 && <HealthChart analyses={analyses} />}
       </div>
     </div>
     <div className="col-span-1 md:col-span-3">
         <h2 className="font-headline text-2xl mb-4">Analysis History</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {pastAnalyses.map((analysis) => (
+        {(!user || user.isAnonymous) && (
+             <Alert>
+              <AlertTitle className="font-headline">Sign Up to Track Your Plants</AlertTitle>
+              <AlertDescription>
+                Create a free account to save your plant analyses and watch them grow over time. Your personal plant dashboard awaits!
+              </AlertDescription>
+            </Alert>
+        )}
+        {user && !user.isAnonymous && analyses.length === 0 && (
+             <Alert>
+              <AlertTitle className="font-headline">No History Yet</AlertTitle>
+              <AlertDescription>
+                You haven't saved any plant analyses. Go to the AI Analysis page to get started!
+              </AlertDescription>
+            </Alert>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          {user && !user.isAnonymous && analyses.map((analysis) => (
             <Link href={`/growth-tracker/${analysis.id}`} key={analysis.id}>
               <Card className="overflow-hidden group h-full shadow-md hover:shadow-xl transition-shadow duration-300">
                 <CardContent className="p-0">
