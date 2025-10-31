@@ -63,18 +63,6 @@ export default function WelcomePage() {
             </Link>
           </Card>
         </div>
-
-        <div className="text-center mt-12">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
-              As Seen On
-            </h2>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-muted-foreground">
-              <span className="font-bold text-xl font-headline">GreenThumb Weekly</span>
-              <span className="font-bold text-xl font-headline">PLANTAE</span>
-              <span className="font-bold text-xl font-headline">Modern Farmer</span>
-              <span className="font-bold text-xl font-headline">EcoLife</span>
-            </div>
-        </div>
     </div>
   );
 }
