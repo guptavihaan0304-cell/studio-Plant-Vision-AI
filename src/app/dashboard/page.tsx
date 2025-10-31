@@ -22,7 +22,40 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const ranks = [
+    { name: "Sprout", minXp: 0 },
+    { name: "Seedling", minXp: 100 },
+    { name: "Gardener", minXp: 250 },
+    { name: "Botanist", minXp: 500 },
+];
+
+function calculateRank(xp: number) {
+    let currentRank = ranks[0];
+    for (let i = ranks.length - 1; i >= 0; i--) {
+        if (xp >= ranks[i].minXp) {
+            currentRank = ranks[i];
+            break;
+        }
+    }
+    
+    const nextRankIndex = ranks.findIndex(r => r.minXp > xp);
+    const nextRank = nextRankIndex !== -1 ? ranks[nextRankIndex] : null;
+
+    const progress = nextRank ? Math.floor(((xp - currentRank.minXp) / (nextRank.minXp - currentRank.minXp)) * 100) : 100;
+    const xpToNext = nextRank ? nextRank.minXp - xp : 0;
+    
+    return {
+        rankName: currentRank.name,
+        progress,
+        xpToNext
+    };
+}
+
+
 function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount: number }) {
+  const xp = analysesCount * 50; // Each analysis is 50 XP
+  const { rankName, progress, xpToNext } = calculateRank(xp);
+    
   if (!user || user.isAnonymous) {
       return (
         <Card>
@@ -53,12 +86,12 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16 border-2 border-primary">
             <AvatarFallback className="bg-secondary text-primary text-2xl font-bold">
-                {user.displayName ? user.displayName.charAt(0) : 'G'}
+                {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'G'}
             </AvatarFallback>
           </Avatar>
           <div>
             <CardTitle className="font-headline text-3xl">{user.displayName || "Gardener"}</CardTitle>
-            <CardDescription>Tracking {analysesCount} plants</CardDescription>
+            <CardDescription>Tracking {analysesCount} {analysesCount === 1 ? 'plant' : 'plants'}</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -69,10 +102,12 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
                     <Award className="size-5 text-accent"/>
                     <span className="font-semibold">Gardener Rank</span>
                 </div>
-                <span className="font-bold text-primary">Plant Novice</span>
+                <span className="font-bold text-primary">{rankName}</span>
             </div>
-            <Progress value={25} />
-            <p className="text-xs text-muted-foreground text-center">250 XP to next rank</p>
+            <Progress value={progress} />
+            <p className="text-xs text-muted-foreground text-center">
+                {xpToNext > 0 ? `${xpToNext} XP to next rank` : "You've reached the highest rank!"}
+            </p>
         </div>
       </CardContent>
     </Card>
@@ -167,16 +202,16 @@ function HealthChart({ analyses }: { analyses: any[] }) {
 }
 
 function PlantGallery() {
-  const { user, firestore } = useFirebase();
+  const { user, firestore, isUserLoading } = useFirebase();
 
   const analysesQuery = useMemoFirebase(() => {
     if (!user || !firestore || user.isAnonymous) return null;
     return query(collection(firestore, `users/${user.uid}/plantAnalyses`), orderBy('analysisDate', 'desc'));
   }, [user, firestore]);
 
-  const { data: pastAnalyses, isLoading } = useCollection(analysesQuery);
+  const { data: pastAnalyses, isLoading: isLoadingAnalyses } = useCollection(analysesQuery);
 
-  if (isLoading) {
+  if (isUserLoading || isLoadingAnalyses) {
     return <p>Loading history...</p>;
   }
 
@@ -256,3 +291,5 @@ export default function HistoryPage() {
     </div>
   );
 }
+
+    
