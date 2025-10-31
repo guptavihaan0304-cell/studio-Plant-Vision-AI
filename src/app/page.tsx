@@ -101,40 +101,40 @@ export default function WelcomePage() {
         
         <div className="grid md:grid-cols-3 gap-6">
           <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
-            <Link href="/analysis" className="flex flex-col flex-grow">
-                <CardHeader>
+            <Link href="/analysis" className="flex flex-col flex-grow p-6">
+                <CardHeader className="p-0">
                     <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <Bot className="size-8 text-primary"/>
                     </div>
                     <CardTitle className="font-headline text-center">AI Analysis</CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow text-center">
+                <CardContent className="flex-grow text-center p-0 mt-4">
                     <p>Snap a photo to identify species, diagnose issues, and get care tips.</p>
                 </CardContent>
             </Link>
           </Card>
           <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
-             <Link href="/assistant" className="flex flex-col flex-grow">
-                <CardHeader>
+             <Link href="/assistant" className="flex flex-col flex-grow p-6">
+                <CardHeader className="p-0">
                      <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <MessageSquare className="size-8 text-primary"/>
                     </div>
                     <CardTitle className="font-headline text-center">AI Assistant</CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow text-center">
+                <CardContent className="flex-grow text-center p-0 mt-4">
                     <p>Chat with our AI expert for personalized plant care advice.</p>
                 </CardContent>
             </Link>
           </Card>
           <Card className="flex flex-col w-full hover:border-primary/50 hover:bg-accent/20 transition-colors">
-             <Link href="/dashboard" className="flex flex-col flex-grow">
-                <CardHeader>
+             <Link href="/dashboard" className="flex flex-col flex-grow p-6">
+                <CardHeader className="p-0">
                      <div className="mx-auto bg-accent/30 p-3 rounded-full w-fit mb-2">
                         <History className="size-8 text-primary"/>
                     </div>
-                    <CardTitle className="font-headline text-center">My History</CardTitle>
+                    <CardTitle className="font-headline text-center">Growth Tracker</CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow text-center">
+                <CardContent className="flex-grow text-center p-0 mt-4">
                     <p>Review your past plant analyses and track their progress over time.</p>
                 </CardContent>
             </Link>

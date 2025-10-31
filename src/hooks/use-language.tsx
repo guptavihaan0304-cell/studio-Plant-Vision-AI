@@ -17,7 +17,7 @@ type LanguageContextType = {
 const defaultTranslations: Translations = {
     aiAnalysis: 'AI Analysis',
     aiAssistant: 'AI Assistant',
-    history: 'History',
+    history: 'Growth Tracker',
     logOut: 'Log out',
     loginSignUp: 'Login / Sign Up',
 };

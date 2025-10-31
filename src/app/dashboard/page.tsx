@@ -166,8 +166,8 @@ export default function HistoryPage() {
       <div className="flex items-center gap-4">
         <History className="size-8 text-primary" />
         <div>
-          <h1 className="font-headline text-3xl">My History</h1>
-          <p className="text-muted-foreground">Review your saved plant analyses.</p>
+          <h1 className="font-headline text-3xl">Growth Tracker</h1>
+          <p className="text-muted-foreground">Review your saved plant analyses and track their growth.</p>
         </div>
       </div>
       <PlantGallery />
