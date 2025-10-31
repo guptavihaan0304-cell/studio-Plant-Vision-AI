@@ -132,7 +132,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
         <CardContent>
           <Alert>
             <Leaf className="h-4 w-4" />
-            <AlertTitle>Not Enough Data for a Chart</AlertTitle>
+            <AlertTitle>Not Enough Data</AlertTitle>
             <AlertDescription>
               Save at least one analysis to see a health trend chart for your plants.
             </AlertDescription>
@@ -141,6 +141,9 @@ function HealthChart({ analyses }: { analyses: any[] }) {
       </Card>
     )
   }
+  
+  // If there's only one data point, we need to provide a domain for the XAxis to render it.
+  const xAxisDomain = chartData.length === 1 ? [chartData[0].date, chartData[0].date] : undefined;
 
   return (
     <Card>
@@ -172,7 +175,8 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value}
-              hide={chartData.length === 1}
+              domain={xAxisDomain}
+              type="category"
             />
             <YAxis domain={[0, 100]} hide={true} />
             <Tooltip
@@ -293,5 +297,3 @@ export default function HistoryPage() {
     </div>
   );
 }
-
-    

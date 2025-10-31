@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, doc, getDoc } from "firebase/firestore";
+import { collection, query, orderBy, doc, getDoc, Firestore } from "firebase/firestore";
 import Image from "next/image";
 import { Bot, Pencil, MessageSquare, Microscope, Leaf } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
@@ -9,7 +9,7 @@ import { useEffect, useState, useMemo } from "react";
 interface GrowthTimelineProps {
   userId: string;
   analysisId: string;
-  firestore: any;
+  firestore: Firestore;
   refreshKey: number;
 }
 
@@ -53,8 +53,9 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
   }, [analysisRef]);
   
   const timelineItems = useMemo(() => {
+    // Don't compute until both are done loading
     if (isLoadingNotes || isLoadingAnalysis) {
-      return [];
+      return null;
     }
     
     const combinedItems = [
@@ -62,26 +63,28 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
       ...(initialAnalysis ? [{...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate}] : [])
     ];
     
+    // Sort items by date, newest first
     return combinedItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [notes, initialAnalysis, isLoadingNotes, isLoadingAnalysis]);
 
-  if (isLoadingNotes || isLoadingAnalysis) {
+  if (timelineItems === null) {
     return <p>Loading timeline...</p>;
   }
 
-  if (!timelineItems || timelineItems.length === 0) {
+  if (timelineItems.length === 0) {
     return <div className="text-center text-muted-foreground py-8">No growth notes or analyses yet. Start by adding a note!</div>;
   }
   
   return (
     <div className="space-y-8">
-      {timelineItems.map((item: any) => (
+      {timelineItems.map((item: any, index: number) => (
         <div key={`${item.type}-${item.id}`} className="flex gap-4">
           <div className="flex flex-col items-center">
             <div className="bg-primary rounded-full p-2 text-primary-foreground">
               {item.type === 'note' ? <Pencil className="size-5" /> : <Bot className="size-5" />}
             </div>
-            <div className="w-px h-full bg-border flex-grow mt-2"></div>
+            {/* Don't render the line for the last item */}
+            {index < timelineItems.length - 1 && <div className="w-px h-full bg-border flex-grow mt-2"></div>}
           </div>
           <div className="flex-1 pb-8">
             <p className="text-sm text-muted-foreground">
@@ -122,5 +125,3 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     </div>
   );
 }
-
-    

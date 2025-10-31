@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { useUser } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
@@ -29,13 +29,15 @@ export function Header() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const pathname = usePathname();
-  const auth = getAuth();
+  const auth = useAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
   const { setLanguage, translateText, translations } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut(auth);
+    // After signing out, explicitly push to the login page.
+    // This is more reliable than waiting for a listener to redirect.
     router.push('/login');
   };
   
