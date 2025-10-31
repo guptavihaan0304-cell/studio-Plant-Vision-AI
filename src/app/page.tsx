@@ -11,6 +11,34 @@ export default function WelcomePage() {
   return (
     <div className="container mx-auto max-w-4xl py-8">
         <div className="text-center py-16">
+             <Carousel className="w-full max-w-2xl mx-auto mb-8"
+                opts={{
+                    loop: true,
+                    align: "start"
+                }}
+            >
+                <CarouselContent>
+                    {PlaceHolderImages.map((image) => (
+                        <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
+                            <Card className="overflow-hidden">
+                                <CardContent className="p-0">
+                                    <Image
+                                        src={image.imageUrl}
+                                        alt={image.description}
+                                        width={400}
+                                        height={300}
+                                        className="object-cover aspect-[4/3]"
+                                        data-ai-hint={image.imageHint}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-[-50px]"/>
+                <CarouselNext className="right-[-50px]" />
+            </Carousel>
+            
             <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-6 shadow-lg">
                 <Leaf className="size-16 text-primary" />
             </div>
@@ -23,33 +51,6 @@ export default function WelcomePage() {
              <p className="text-sm font-bold font-headline text-muted-foreground max-w-2xl mx-auto mb-12">
               Scroll down and click the options you need
             </p>
-            
-            <Carousel className="w-full max-w-2xl mx-auto"
-                opts={{
-                    loop: true,
-                }}
-            >
-                <CarouselContent>
-                    {PlaceHolderImages.map((image) => (
-                        <CarouselItem key={image.id}>
-                            <Card className="overflow-hidden">
-                                <CardContent className="p-0">
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={image.description}
-                                        width={800}
-                                        height={600}
-                                        className="object-cover aspect-[4/3]"
-                                        data-ai-hint={image.imageHint}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-[-50px]"/>
-                <CarouselNext className="right-[-50px]" />
-            </Carousel>
         </div>
         
         <div className="grid md:grid-cols-3 gap-6 pt-16">

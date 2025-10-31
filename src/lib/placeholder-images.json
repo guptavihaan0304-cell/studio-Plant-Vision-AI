@@ -23,6 +23,24 @@
       "description": "A snake plant in a minimalist pot.",
       "imageUrl": "https://images.unsplash.com/photo-1613498717076-c0d2d82ecf2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c25ha2UlMjBwbGFudHxlbnwwfHx8fDE3NjE3Mzg5Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "snake plant"
+    },
+    {
+      "id": "plant-5",
+      "description": "A close-up of a fern.",
+      "imageUrl": "https://images.unsplash.com/photo-1671556786378-4de1b24f797f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZmVybiUyMHBsYW50fGVufDB8fHx8MTc2MTgwOTEyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fern plant"
+    },
+    {
+      "id": "plant-6",
+      "description": "A collection of various cacti.",
+      "imageUrl": "https://images.unsplash.com/photo-1569158937201-97f16a565bd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjYWN0dXMlMjBwbGFudHxlbnwwfHx8fDE3NjE4Mjc5Njh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cactus plant"
+    },
+    {
+      "id": "plant-7",
+      "description": "A hanging pothos plant.",
+      "imageUrl": "https://images.unsplash.com/photo-1596724878582-76f1a8fdc24f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3Rob3MlMjBwbGFudHxlbnwwfHx8fDE3NjE4MzI2Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pothos plant"
     }
   ]
 }
