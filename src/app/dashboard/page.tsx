@@ -8,7 +8,7 @@ import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from "firebase/firestore";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { LineChart, CartesianGrid, XAxis, Line, Tooltip } from "recharts";
+import { LineChart, CartesianGrid, XAxis, Line, Tooltip, YAxis } from "recharts";
 import { useMemo } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -160,8 +160,8 @@ function HealthChart({ analyses }: { analyses: any[] }) {
             data={chartData}
             margin={{
               top: 10,
-              left: 12,
-              right: 12,
+              left: 0,
+              right: 20,
               bottom: 10
             }}
           >
@@ -172,7 +172,9 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value}
+              hide={chartData.length === 1}
             />
+            <YAxis domain={[0, 100]} hide={true} />
             <Tooltip
               cursor={false}
               content={<ChartTooltipContent 
@@ -291,3 +293,5 @@ export default function HistoryPage() {
     </div>
   );
 }
+
+    

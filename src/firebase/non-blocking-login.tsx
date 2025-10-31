@@ -6,11 +6,14 @@ import {
   signInWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
+  signOut,
 } from 'firebase/auth';
 
 /** Initiate anonymous sign-in (non-blocking). */
 export function initiateAnonymousSignIn(authInstance: Auth): void {
-  signInAnonymously(authInstance);
+  signInAnonymously(authInstance).catch(error => {
+      console.error("Anonymous sign in failed:", error);
+  });
 }
 
 /** Initiate email/password sign-up (non-blocking) and send verification email. */
@@ -31,18 +34,25 @@ export async function initiateEmailSignUp(
     await sendEmailVerification(user);
 
     // Sign the user out until they are verified
-    await authInstance.signOut();
+    await signOut(authInstance);
     
     return true;
   } catch (error) {
     console.error("Sign up failed:", error);
-    // In a real app, you'd want to use the toast hook or another way
-    // to display this error to the user.
     return false;
   }
 }
 
 /** Initiate email/password sign-in (non-blocking). */
-export function initiateEmailSignIn(authInstance: Auth, email: string, password: string): void {
-  signInWithEmailAndPassword(authInstance, email, password);
+export async function initiateEmailSignIn(authInstance: Auth, email: string, password: string): Promise<boolean> {
+  try {
+      await signInWithEmailAndPassword(authInstance, email, password);
+      // The onAuthStateChanged listener in the provider will handle the redirect.
+      return true;
+  } catch(error) {
+      console.error("Sign in failed:", error);
+      return false;
+  }
 }
+
+    

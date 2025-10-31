@@ -1,10 +1,10 @@
 'use client';
 
 import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, where, doc, getDoc } from "firebase/firestore";
+import { collection, query, orderBy, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import { Bot, Pencil, MessageSquare, Microscope, Leaf } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 interface GrowthTimelineProps {
   userId: string;
@@ -22,7 +22,7 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     );
   }, [userId, analysisId, firestore, refreshKey]);
 
-   const analysisRef = useMemoFirebase(() => {
+  const analysisRef = useMemoFirebase(() => {
     if (!firestore || !userId || !analysisId) return null;
     return doc(firestore, `users/${userId}/plantAnalyses`, analysisId as string);
   }, [firestore, userId, analysisId]);
@@ -34,6 +34,7 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
   useEffect(() => {
     const fetchAnalysis = async () => {
       if (analysisRef) {
+        setIsLoadingAnalysis(true);
         try {
           const docSnap = await getDoc(analysisRef);
           if (docSnap.exists()) {
@@ -50,14 +51,19 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
     };
     fetchAnalysis();
   }, [analysisRef]);
-
-
-  // Combine notes and the single analysis into one timeline
-  const timelineItems = [
-    ...(notes || []).map(note => ({ ...note, type: 'note', date: note.noteDate })),
-    ...(initialAnalysis ? [{...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate}] : [])
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
+  
+  const timelineItems = useMemo(() => {
+    if (isLoadingNotes || isLoadingAnalysis) {
+      return [];
+    }
+    
+    const combinedItems = [
+      ...(notes || []).map(note => ({ ...note, type: 'note', date: note.noteDate })),
+      ...(initialAnalysis ? [{...initialAnalysis, type: 'analysis', date: initialAnalysis.analysisDate}] : [])
+    ];
+    
+    return combinedItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [notes, initialAnalysis, isLoadingNotes, isLoadingAnalysis]);
 
   if (isLoadingNotes || isLoadingAnalysis) {
     return <p>Loading timeline...</p>;
@@ -70,7 +76,7 @@ export function GrowthTimeline({ userId, analysisId, firestore, refreshKey }: Gr
   return (
     <div className="space-y-8">
       {timelineItems.map((item: any) => (
-        <div key={item.id} className="flex gap-4">
+        <div key={`${item.type}-${item.id}`} className="flex gap-4">
           <div className="flex flex-col items-center">
             <div className="bg-primary rounded-full p-2 text-primary-foreground">
               {item.type === 'note' ? <Pencil className="size-5" /> : <Bot className="size-5" />}

@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Sprout, User, KeyRound, MailCheck, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { signOut } from 'firebase/auth';
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -34,11 +35,20 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [awaitingVerification, setAwaitingVerification] = useState(false);
+  
+  // This state helps prevent a "flicker" on page load if the user is already signed in.
+  const [hasCheckedUser, setHasCheckedUser] = useState(false);
+
 
   useEffect(() => {
-    if (!isUserLoading && user) {
-      if (user.emailVerified || user.isAnonymous) {
-        router.push('/dashboard');
+    if (!isUserLoading) {
+      setHasCheckedUser(true);
+      if (user) {
+        if (user.isAnonymous) {
+          router.push('/dashboard');
+        } else if (user.emailVerified) {
+          router.push('/dashboard');
+        }
       }
     }
   }, [user, isUserLoading, router]);
@@ -47,6 +57,7 @@ export default function LoginPage() {
   const handleAnonymousSignIn = async () => {
     setIsLoading(true);
     initiateAnonymousSignIn(auth);
+    // The useEffect will handle the redirect
   };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
@@ -80,17 +91,35 @@ export default function LoginPage() {
             description: 'Please check your inbox to verify your account before logging in.',
             duration: 10000,
         })
+      } else {
+         toast({
+          variant: 'destructive',
+          title: 'Sign Up Failed',
+          description: 'Could not create account. The email might already be in use.',
+        });
       }
+      setIsLoading(false);
     } else {
-        initiateEmailSignIn(auth, email, password);
-    }
-    // We don't set loading to false immediately for sign-in, 
-    // as onAuthStateChanged will trigger a redirect.
-    // For sign-up, we want the loading to stop to show the verification message.
-    if(isSigningUp) {
-        setIsLoading(false);
+        const signInSuccessful = await initiateEmailSignIn(auth, email, password);
+        if(!signInSuccessful) {
+             toast({
+                variant: 'destructive',
+                title: 'Sign In Failed',
+                description: 'Incorrect email or password, or your email has not been verified.',
+            });
+            setIsLoading(false);
+        }
+        // For successful sign-in, the useEffect will handle the redirect.
     }
   };
+  
+  if (isUserLoading || !hasCheckedUser) {
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-background">
+            <Loader2 className="size-12 animate-spin text-primary" />
+        </div>
+    )
+  }
   
   if (awaitingVerification) {
       return (
@@ -112,6 +141,7 @@ export default function LoginPage() {
                  <Button variant="outline" className="w-full" onClick={() => {
                      setAwaitingVerification(false);
                      setIsSigningUp(false);
+                     signOut(auth); // Clear any partial auth state
                  }}>
                     Back to Login
                  </Button>
@@ -196,7 +226,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="animate-spin" />}
+              {isLoading && <Loader2 className="mr-2 animate-spin" />}
               {isLoading ? 'Please wait...' : (isSigningUp ? 'Sign Up' : 'Sign In')}
             </Button>
             
@@ -236,3 +266,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
