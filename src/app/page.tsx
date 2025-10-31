@@ -6,16 +6,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import Autoplay from "embla-carousel-autoplay"
 
 export default function WelcomePage() {
   return (
     <div className="container mx-auto max-w-4xl py-8">
         <div className="text-center py-16">
-             <Carousel className="w-full max-w-2xl mx-auto mb-8"
+             <Carousel 
+                className="w-full max-w-2xl mx-auto mb-8"
                 opts={{
                     loop: true,
                     align: "start"
                 }}
+                plugins={[
+                    Autoplay({
+                        delay: 2000,
+                        stopOnInteraction: false,
+                    })
+                ]}
             >
                 <CarouselContent>
                     {PlaceHolderImages.map((image) => (
