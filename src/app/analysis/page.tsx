@@ -61,6 +61,7 @@ export default function AnalysisPage() {
       identifiedDiseases: [analysis.diagnosis.diagnosis.primaryDiagnosis],
       remedySuggestions: analysis.remedies?.remedies || 'N/A',
       plantImageURI: imagePreview,
+      ...analysis.identification,
     };
     
     const collectionRef = collection(firestore, 'users', user.uid, 'plantAnalyses');

@@ -79,7 +79,7 @@ export function Header() {
         <SidebarTrigger className="md:hidden" />
         <Link href="/" className="flex items-center gap-2 md:hidden">
             <Leaf className="text-primary size-6" />
-            <h1 className="font-headline text-xl font-bold text-foreground">Verdant Lens</h1>
+            <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
         </Link>
         {pathname === '/' && user && (
             <h2 className="font-headline text-xl font-semibold hidden md:block">
