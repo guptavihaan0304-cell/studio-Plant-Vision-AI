@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2, Bookmark } from 'lucide-react';
+import { UploadCloud, Leaf, Microscope, Pill, BrainCircuit, Loader2, Bookmark, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
@@ -14,7 +14,7 @@ import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection } from 'firebase/firestore';
 import { CameraScan } from '@/components/camera-scan';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 type AnalysisState = {
   identification: IdentifyPlantSpeciesOutput['plantIdentification'] | null;
@@ -26,6 +26,7 @@ export default function AnalysisPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisState | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const { toast } = useToast();
   const { user, firestore } = useFirebase();
 
@@ -77,6 +78,7 @@ export default function AnalysisPage() {
     setIsLoading(true);
     setAnalysis(null);
     setImagePreview(imageDataUri);
+    setIsCameraOpen(false);
 
     try {
       const [identificationResult, diagnosisResult] = await Promise.all([
@@ -127,45 +129,55 @@ export default function AnalysisPage() {
           </div>
           <CardTitle className="font-headline text-3xl mt-4">AI Plant Analysis</CardTitle>
           <CardDescription className="max-w-md mx-auto">
-            Use your camera or upload a photo, and our AI will identify your plant, diagnose any issues, and suggest care remedies.
+            Use your camera for a live scan or upload a photo. Our AI will identify your plant, diagnose issues, and suggest care.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="camera" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="camera">Camera Scan</TabsTrigger>
-              <TabsTrigger value="upload">Upload Image</TabsTrigger>
-            </TabsList>
-            <TabsContent value="camera">
-              <div className="p-4 border-dashed border-2 border-primary/50 rounded-lg min-h-[300px]">
-                <CameraScan onCapture={handleAnalysis} disabled={isLoading} />
-              </div>
-            </TabsContent>
-            <TabsContent value="upload">
-                <div
-                    className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
-                    onClick={handleUploadClick}
-                >
-                    <input
-                    id="plant-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                    disabled={isLoading}
-                    />
-                    <UploadCloud className="size-12 text-primary/80" />
-                    <p className="text-lg font-semibold font-headline">Click or drag to upload an image</p>
-                    <p className="text-muted-foreground">For best results, use a clear, well-lit photo.</p>
-                    <Button disabled={isLoading} onClick={handleUploadClick} >
-                    {isLoading ? 'Loading...' : 'Upload Image'}
-                    </Button>
-                </div>
-            </TabsContent>
-          </Tabs>
+        <CardContent className="grid md:grid-cols-2 gap-6">
+            <div
+                className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
+                onClick={() => setIsCameraOpen(true)}
+            >
+                <Camera className="size-12 text-primary/80" />
+                <p className="text-lg font-semibold font-headline">Live Camera Scan</p>
+                <p className="text-muted-foreground">Get real-time feedback from our AI.</p>
+                <Button disabled={isLoading} onClick={() => setIsCameraOpen(true)} >
+                {isLoading ? 'Loading...' : 'Start Camera'}
+                </Button>
+            </div>
+            <div
+                className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
+                onClick={handleUploadClick}
+            >
+                <input
+                id="plant-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+                disabled={isLoading}
+                />
+                <UploadCloud className="size-12 text-primary/80" />
+                <p className="text-lg font-semibold font-headline">Upload an Image</p>
+                <p className="text-muted-foreground">Use a clear, well-lit photo for best results.</p>
+                <Button disabled={isLoading} onClick={handleUploadClick} >
+                {isLoading ? 'Loading...' : 'Upload Image'}
+                </Button>
+            </div>
         </CardContent>
       </Card>
       
+        <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
+            <DialogContent className="max-w-5xl p-0 border-0">
+                <DialogHeader className="p-4 sr-only">
+                    <DialogTitle>Live Plant Scan</DialogTitle>
+                    <DialogDescription>
+                        The camera is active. Position your plant in the frame and capture an image for analysis.
+                    </DialogDescription>
+                </DialogHeader>
+                <CameraScan onCapture={handleAnalysis} disabled={isLoading} />
+            </DialogContent>
+        </Dialog>
+
       {isLoading && (
           <Card className="mt-8 text-center">
               <CardContent className="p-8">

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Camera, Zap, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Camera, Zap, Loader2, ScanLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { cn } from '@/lib/utils';
 
 interface CameraScanProps {
   onCapture: (imageDataUri: string) => void;
@@ -13,104 +14,153 @@ interface CameraScanProps {
 
 export function CameraScan({ onCapture, disabled }: CameraScanProps) {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const getCameraPermission = async () => {
-      // Only run on client
-      if (typeof window === 'undefined' || !navigator.mediaDevices) {
+  const startVideoStream = useCallback(async () => {
+     if (typeof window === 'undefined' || !navigator.mediaDevices) {
         setHasCameraPermission(false);
         return;
       }
       
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Try to get the back camera first
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: { exact: "environment" } } 
+        });
         setHasCameraPermission(true);
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
       } catch (error) {
-        console.error('Error accessing camera:', error);
-        setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings to use this feature.',
-        });
+        console.warn('Back camera not found, trying front camera...');
+        try {
+            // Fallback to front camera
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            setHasCameraPermission(true);
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (finalError) {
+             console.error('Error accessing any camera:', finalError);
+            setHasCameraPermission(false);
+            toast({
+                variant: 'destructive',
+                title: 'Camera Access Denied',
+                description: 'Please enable camera permissions in your browser settings to use this feature.',
+            });
+        }
       }
-    };
+  }, [toast]);
 
-    getCameraPermission();
+
+  useEffect(() => {
+    startVideoStream();
     
-    // Cleanup function to stop the video stream
     return () => {
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach(track => track.stop());
         }
     }
-
-  }, [toast]);
+  }, [startVideoStream]);
 
   const handleCapture = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      
-      // Set canvas dimensions to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      const context = canvas.getContext('2d');
-      if (context) {
-        // Draw the current video frame to the canvas
-        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-        
-        // Get the image data from the canvas
-        const imageDataUri = canvas.toDataURL('image/jpeg');
-        onCapture(imageDataUri);
-      }
-    }
+    setIsScanning(true);
+    // Simulate a 2-second scan
+    setTimeout(() => {
+        if (videoRef.current && canvasRef.current) {
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                const imageDataUri = canvas.toDataURL('image/jpeg');
+                onCapture(imageDataUri);
+            }
+        }
+        setIsScanning(false);
+    }, 2000);
   };
+  
+  const isLoading = disabled || isScanning;
 
   if (hasCameraPermission === null) {
-      return <div className="flex items-center justify-center h-full"><Loader2 className="animate-spin" /> <p className="ml-2">Initializing Camera...</p></div>
+      return (
+        <div className="flex items-center justify-center h-full min-h-[400px] bg-black text-white">
+            <Loader2 className="animate-spin" /> <p className="ml-2">Initializing Camera...</p>
+        </div>
+      );
   }
 
   if (hasCameraPermission === false) {
       return (
-          <Alert variant="destructive">
-              <Camera className="h-4 w-4" />
-              <AlertTitle>Camera Access Required</AlertTitle>
-              <AlertDescription>
-                Please allow camera access in your browser to use this feature. You may need to refresh the page after granting permission.
-              </AlertDescription>
+          <div className="p-4">
+            <Alert variant="destructive">
+                <Camera className="h-4 w-4" />
+                <AlertTitle>Camera Access Required</AlertTitle>
+                <AlertDescription>
+                    Please allow camera access in your browser to use this feature. You may need to refresh the page after granting permission.
+                </AlertDescription>
             </Alert>
+          </div>
       )
   }
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="w-full aspect-video bg-muted rounded-lg overflow-hidden relative">
-          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-          <canvas ref={canvasRef} className="hidden" />
-      </div>
-      <Button onClick={handleCapture} disabled={disabled}>
-        {disabled ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Analyzing...
-          </>
-        ) : (
-          <>
-            <Zap className="mr-2 h-4 w-4" />
-            Scan Plant
-          </>
+    <div className="w-full bg-black relative aspect-[9/16] sm:aspect-video overflow-hidden">
+        <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+        <canvas ref={canvasRef} className="hidden" />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-between p-4">
+            <div className="w-full text-center p-2 bg-black/50 rounded-lg">
+                <h3 className="font-headline text-white text-lg">Live Plant Scanner</h3>
+                <p className="text-white/80 text-sm">Position the plant in the frame and hold steady.</p>
+            </div>
+            
+            <div className={cn("absolute inset-1/4 border-2 border-dashed border-white/50 rounded-lg pointer-events-none transition-colors duration-500",
+                isScanning && "border-primary animate-pulse"
+            )}>
+                 {isScanning && (
+                    <>
+                        <div className="absolute top-2 left-2 text-primary font-bold text-sm bg-black/50 px-2 py-1 rounded">ANALYZING...</div>
+                        {/* Simulated defect spots */}
+                        <div className="absolute top-[20%] left-[30%] w-8 h-8 border-2 border-red-500 rounded-full animate-ping"></div>
+                        <div className="absolute bottom-[25%] right-[25%] w-12 h-12 border-2 border-red-500 rounded-full animate-ping delay-500"></div>
+                        <div className="absolute top-[40%] right-[15%] w-6 h-6 border-2 border-yellow-400 rounded-full animate-ping delay-1000"></div>
+                    </>
+                 )}
+            </div>
+
+            <Button onClick={handleCapture} disabled={isLoading} size="lg" className="w-20 h-20 rounded-full border-4 border-white/50 bg-primary/80 hover:bg-primary z-20">
+                {isLoading ? (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                ) : (
+                    <ScanLine className="h-8 w-8" />
+                )}
+                <span className="sr-only">Scan Plant</span>
+            </Button>
+        </div>
+
+        {/* Scanning line effect */}
+        {isScanning && (
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-primary/70 shadow-[0_0_20px_5px_hsl(var(--primary))] animate-[scan_2s_ease-in-out_infinite] z-20"></div>
         )}
-      </Button>
+
+        <style jsx>{`
+            @keyframes scan {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(100vh); }
+            }
+        `}</style>
     </div>
   );
 }
