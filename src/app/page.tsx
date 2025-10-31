@@ -3,6 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Leaf, Bot, History, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 export default function WelcomePage() {
   return (
@@ -17,12 +20,39 @@ export default function WelcomePage() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
             </p>
-             <p className="text-sm font-bold font-headline text-muted-foreground max-w-2xl mx-auto">
+             <p className="text-sm font-bold font-headline text-muted-foreground max-w-2xl mx-auto mb-12">
               Scroll down and click the options you need
             </p>
+            
+            <Carousel className="w-full max-w-2xl mx-auto"
+                opts={{
+                    loop: true,
+                }}
+            >
+                <CarouselContent>
+                    {PlaceHolderImages.map((image) => (
+                        <CarouselItem key={image.id}>
+                            <Card className="overflow-hidden">
+                                <CardContent className="p-0">
+                                    <Image
+                                        src={image.imageUrl}
+                                        alt={image.description}
+                                        width={800}
+                                        height={600}
+                                        className="object-cover aspect-[4/3]"
+                                        data-ai-hint={image.imageHint}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-[-50px]"/>
+                <CarouselNext className="right-[-50px]" />
+            </Carousel>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-6 pt-16">
             <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
                 <Link href="/analysis" className="group flex flex-col h-full">
                   <CardHeader className="p-6">
