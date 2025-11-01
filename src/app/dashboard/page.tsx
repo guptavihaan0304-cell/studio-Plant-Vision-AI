@@ -194,23 +194,22 @@ function HealthChart({ analyses }: { analyses: any[] }) {
                     className="bg-card/80 backdrop-blur-sm rounded-xl"
                   />}
                 />
-                <defs>
-                    <linearGradient id="healthGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                    </linearGradient>
-                </defs>
                 <Line
                   dataKey="health"
                   type="monotone"
                   stroke="hsl(var(--primary))"
                   strokeWidth={3}
-                  dot={({ cx, cy }) => (
-                    <circle cx={cx} cy={cy} r={5} fill="hsl(var(--primary))" className="animate-pulse" />
+                  dot={({ key, cx, cy }) => (
+                    <circle key={key} cx={cx} cy={cy} r={5} fill="hsl(var(--primary))" className="animate-pulse" />
                   )}
                   activeDot={{ r: 8 }}
-                  fill="url(#healthGradient)"
                 />
+                 <defs>
+                    <linearGradient id="healthGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                    </linearGradient>
+                </defs>
               </LineChart>
           </ResponsiveContainer>
         </ChartContainer>
