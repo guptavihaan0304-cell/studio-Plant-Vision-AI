@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Settings as SettingsIcon, BrainCircuit, Heart, Shield, Paintbrush, Moon, Sun, Laptop, User, LogOut, Loader2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
-import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { doc, updateDoc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 export function SettingsPageContent() {
   const { theme, setTheme } = useTheme();
@@ -69,22 +69,22 @@ export function SettingsPageContent() {
       isChildSafe
     };
 
-    try {
-      await setDoc(userDocRef, settingsData, { merge: true });
-      toast({
-        title: "Settings Saved",
-        description: "Your new preferences have been saved successfully.",
+    setDocumentNonBlocking(userDocRef, settingsData, { merge: true });
+
+    toast({
+      title: "Saving Settings",
+      description: "Your new preferences are being saved.",
+    });
+
+    // We don't know for sure if it succeeded, but we can give optimistic UI feedback.
+    // The error emitter will catch any permission issues.
+    setTimeout(() => {
+      setIsSaving(false);
+       toast({
+        title: "Settings Submitted",
+        description: "Your preferences have been sent to the server.",
       });
-    } catch (error) {
-      console.error("Failed to save settings:", error);
-      toast({
-        variant: 'destructive',
-        title: "Save Failed",
-        description: "Could not save your settings. Please try again.",
-      });
-    } finally {
-        setIsSaving(false);
-    }
+    }, 1500); // Simulate a short delay
   };
 
   const handleSignOut = async () => {
