@@ -1,109 +1,84 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sprout, Bot, History, MessageSquare } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bot, History, MessageSquare, Sprout } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import Autoplay from "embla-carousel-autoplay"
 
 export default function WelcomePage() {
   return (
-    <div className="container mx-auto max-w-4xl py-8">
-        <div className="text-center py-16">
-             <Carousel 
-                className="w-full max-w-2xl mx-auto mb-8"
-                opts={{
-                    loop: true,
-                    align: "start"
-                }}
-                plugins={[
-                    Autoplay({
-                        delay: 3000,
-                        stopOnInteraction: false,
-                    })
-                ]}
-            >
-                <CarouselContent>
-                    {PlaceHolderImages.map((image) => (
-                        <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
-                            <Card className="overflow-hidden">
-                                <CardContent className="p-0">
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={image.description}
-                                        width={400}
-                                        height={300}
-                                        className="object-cover aspect-[4/3]"
-                                        data-ai-hint={image.imageHint}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-[-50px]"/>
-                <CarouselNext className="right-[-50px]" />
-            </Carousel>
-            
-            <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-6 shadow-lg">
-                <Sprout className="size-16 text-primary" />
+    <div className="container mx-auto max-w-5xl py-12">
+        <header className="text-center mb-16">
+            <div className="inline-block bg-primary/20 text-primary p-4 rounded-full mb-4">
+                <Sprout className="size-12" />
             </div>
-            <h1 className="text-5xl font-bold font-headline text-primary mb-4">
-                Welcome to PlantVision AI
+            <h1 className="text-5xl font-bold font-headline text-foreground mb-4">
+                Smart Plant Doctor
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
             </p>
-             <p className="text-sm font-bold font-headline text-muted-foreground max-w-2xl mx-auto mb-12">
-              Select an option below to get started.
-            </p>
-        </div>
+        </header>
         
-        <div className="grid md:grid-cols-3 gap-6 pt-16">
-            <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
-                <Link href="/analysis" className="group flex flex-col h-full">
-                  <CardHeader className="p-6">
-                      <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
-                          <Bot className="size-8 text-primary group-hover:text-accent-foreground"/>
-                      </div>
-                      <CardTitle className="font-headline text-center text-primary group-hover:text-accent-foreground">AI Analysis</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow text-center p-6 pt-0">
-                      <p>Snap a photo to identify species, diagnose issues, and get care tips.</p>
-                  </CardContent>
-                </Link>
-            </Card>
-            <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
-              <Link href="/assistant" className="group flex flex-col h-full">
-                  <CardHeader className="p-6">
-                       <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
-                          <MessageSquare className="size-8 text-primary group-hover:text-accent-foreground"/>
-                      </div>
-                      <CardTitle className="font-headline text-center text-primary group-hover:text-accent-foreground">AI Assistant</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow text-center p-6 pt-0">
-                      <p>Chat with our AI expert for personalized plant care advice.</p>
-                  </CardContent>
-              </Link>
-            </Card>
-            <Card className="flex flex-col w-full h-full hover:border-primary/50 hover:bg-accent/10 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
-              <Link href="/dashboard" className="group flex flex-col h-full">
-                  <CardHeader className="p-6">
-                       <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-2 group-hover:bg-accent/20 transition-colors">
-                          <History className="size-8 text-primary group-hover:text-accent-foreground"/>
-                      </div>
-                      <CardTitle className="font-headline text-center text-primary group-hover:text-accent-foreground">Dashboard</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow text-center p-6 pt-0">
-                      <p>Review your past plant analyses and track their progress over time.</p>
-                  </CardContent>
-              </Link>
-            </Card>
-        </div>
+        <main>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <FeatureCard 
+                href="/analysis"
+                icon={Bot}
+                title="AI Analysis"
+                description="Snap a photo to identify species, diagnose issues, and get care tips."
+              />
+              <FeatureCard 
+                href="/assistant"
+                icon={MessageSquare}
+                title="AI Assistant"
+                description="Chat with our AI expert for personalized plant care advice."
+              />
+              <FeatureCard 
+                href="/dashboard"
+                icon={History}
+                title="My Garden"
+                description="Review your past plant analyses and track their progress over time."
+              />
+          </div>
+
+          <div className="mt-20 text-center">
+            <h2 className="text-3xl font-headline font-bold mb-8">Featured Plants</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {PlaceHolderImages.slice(0, 8).map((image) => (
+                  <div key={image.id} className="rounded-2xl overflow-hidden shadow-lg group">
+                      <Image
+                          src={image.imageUrl}
+                          alt={image.description}
+                          width={400}
+                          height={400}
+                          className="object-cover aspect-square w-full h-full group-hover:scale-105 transition-transform duration-300"
+                          data-ai-hint={image.imageHint}
+                      />
+                  </div>
+              ))}
+            </div>
+          </div>
+        </main>
     </div>
   );
 }
 
-    
+function FeatureCard({ href, icon: Icon, title, description }: { href: string; icon: React.ElementType; title: string; description: string; }) {
+  return (
+    <Link href={href} className="group block">
+      <Card className="flex flex-col w-full h-full hover:border-primary/50 bg-white hover:bg-secondary transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 rounded-2xl">
+          <CardHeader className="items-center text-center">
+              <div className="bg-secondary group-hover:bg-background rounded-full p-3 mb-2 transition-colors">
+                  <Icon className="size-7 text-primary"/>
+              </div>
+              <CardTitle className="font-headline text-xl">{title}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center text-muted-foreground pt-0">
+              <p>{description}</p>
+          </CardContent>
+      </Card>
+    </Link>
+  )
+}

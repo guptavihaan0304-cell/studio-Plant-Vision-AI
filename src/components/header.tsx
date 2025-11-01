@@ -1,7 +1,6 @@
 'use client';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Languages, Sprout, LogOut, Moon, Sun, User as UserIcon } from 'lucide-react';
+import { Languages, Sprout, LogOut, Moon, Sun, User as UserIcon, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +29,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const auth = useAuth();
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const { toast } = useToast();
   const { setLanguage, translateText, translations } = useLanguage();
 
@@ -74,20 +73,13 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="md:hidden" />
-        <Link href="/" className="flex items-center gap-2 md:hidden">
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+       <Link href="/" className="flex items-center gap-2">
             <Sprout className="text-primary size-6" />
-            <h1 className="font-headline text-xl font-bold text-foreground">PlantVision AI</h1>
+            <h1 className="font-headline text-xl font-bold text-foreground hidden sm:block">Smart Plant Doctor</h1>
         </Link>
-        {pathname === '/' && user && (
-            <h2 className="font-headline text-xl font-semibold hidden md:block">
-                Welcome, {user.displayName || 'Gardener'}!
-            </h2>
-        )}
-      </div>
-      <div className="flex items-center gap-4">
+      
+      <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -158,6 +150,10 @@ export function Header() {
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                 <DropdownMenuItem onClick={() => router.push('/profile')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>{translations.logOut}</span>
@@ -175,5 +171,3 @@ export function Header() {
     </header>
   );
 }
-
-    

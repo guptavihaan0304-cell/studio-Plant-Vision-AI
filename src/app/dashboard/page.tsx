@@ -8,7 +8,7 @@ import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from "firebase/firestore";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { LineChart, CartesianGrid, XAxis, Line, Tooltip, YAxis } from "recharts";
+import { LineChart, CartesianGrid, XAxis, Line, Tooltip, YAxis, ResponsiveContainer } from "recharts";
 import { useMemo } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -58,22 +58,22 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
     
   if (!user || user.isAnonymous) {
       return (
-        <Card className="glassmorphic-panel">
+        <Card className="rounded-2xl shadow-sm">
             <CardHeader>
-                <CardTitle className="font-headline text-2xl text-primary">Create a Profile</CardTitle>
+                <CardTitle className="font-headline text-xl text-primary">Create a Profile</CardTitle>
                 <CardDescription>Sign up to track your plants and earn rewards!</CardDescription>
             </CardHeader>
             <CardContent>
-                <Alert className="bg-secondary/20 border-secondary/50">
+                <Alert className="bg-secondary text-foreground">
                     <Leaf className="h-4 w-4 text-primary" />
-                    <AlertTitle className="text-primary/90">Welcome, Guest!</AlertTitle>
+                    <AlertTitle className="font-semibold">Welcome, Guest!</AlertTitle>
                     <AlertDescription>
                         Create an account to save your plant analyses, track their growth, and level up your gardener rank.
                     </AlertDescription>
                 </Alert>
             </CardContent>
             <CardFooter>
-                 <Button asChild className="w-full rounded-full glow-effect">
+                 <Button asChild className="w-full rounded-full">
                     <Link href="/profile">Sign Up / Login</Link>
                 </Button>
             </CardFooter>
@@ -81,16 +81,16 @@ function GardenerProfileCard({ user, analysesCount }: { user: any, analysesCount
       )
   }
   return (
-    <Card className="glassmorphic-panel">
+    <Card className="rounded-2xl shadow-sm">
       <CardHeader>
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16 border-2 border-primary glow-effect">
+          <Avatar className="h-16 w-16 border-2 border-primary">
             <AvatarFallback className="bg-secondary text-primary text-2xl font-bold">
                 {user.displayName ? user.displayName.charAt(0).toUpperCase() : <User />}
             </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="font-headline text-3xl text-primary">{user.displayName || "Gardener"}</CardTitle>
+            <CardTitle className="font-headline text-2xl text-foreground">{user.displayName || "Gardener"}</CardTitle>
             <CardDescription>Tracking {analysesCount} {analysesCount === 1 ? 'plant' : 'plants'}</CardDescription>
           </div>
         </div>
@@ -128,11 +128,11 @@ function HealthChart({ analyses }: { analyses: any[] }) {
 
   if (chartData.length < 1) {
     return (
-      <Card className="h-full flex flex-col justify-center glassmorphic-panel">
+      <Card className="h-full flex flex-col justify-center rounded-2xl shadow-sm">
         <CardContent>
-          <Alert className="bg-secondary/20 border-secondary/50">
+          <Alert className="bg-secondary text-foreground">
             <Leaf className="h-4 w-4 text-primary" />
-            <AlertTitle className="text-primary/90">Not Enough Data</AlertTitle>
+            <AlertTitle className="font-semibold">Not Enough Data</AlertTitle>
             <AlertDescription>
               Save at least one analysis to see a health trend chart for your plants.
             </AlertDescription>
@@ -145,71 +145,74 @@ function HealthChart({ analyses }: { analyses: any[] }) {
   const xAxisDomain = chartData.length === 1 ? [chartData[0].date, chartData[0].date] : undefined;
 
   return (
-    <Card className="glassmorphic-panel">
+    <Card className="rounded-2xl shadow-sm">
       <CardHeader>
         <div className="flex items-center gap-4">
           <LineChartIcon className="size-8 text-primary" />
           <div>
-            <CardTitle className="font-headline text-3xl text-primary">Health Trend</CardTitle>
+            <CardTitle className="font-headline text-2xl text-foreground">Health Trend</CardTitle>
             <CardDescription>Visualizing your plant's health over time.</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              top: 10,
-              left: 0,
-              right: 20,
-              bottom: 10
-            }}
-          >
-            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)"/>
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value}
-              domain={xAxisDomain}
-              type="category"
-              stroke="hsl(var(--foreground) / 0.6)"
-            />
-            <YAxis domain={[0, 100]} hide={true} />
-            <Tooltip
-              cursor={{ stroke: "hsl(var(--primary))", strokeWidth: 1, strokeDasharray: "3 3" }}
-              content={<ChartTooltipContent 
-                indicator="line"
-                formatter={(value, name, item) => (
-                  <div className="space-y-1">
-                    <p className="font-bold text-primary">{item.payload.plantName}</p>
-                    <p>Health: {item.payload.diagnosis}</p>
-                    <p className="text-muted-foreground text-xs">{item.payload.date}</p>
-                  </div>
-                )}
-                hideLabel
-                className="glassmorphic-panel"
-              />}
-            />
-            <Line
-              dataKey="health"
-              type="monotone"
-              stroke="url(#healthGradient)"
-              strokeWidth={3}
-              dot={({ key, cx, cy }) => {
-                return <circle key={key} cx={cx} cy={cy} r={5} fill="hsl(var(--primary))" />;
-              }}
-            />
-            <defs>
-                <linearGradient id="healthGradient" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="hsl(var(--secondary))" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" />
-                </linearGradient>
-            </defs>
-          </LineChart>
+          <ResponsiveContainer>
+              <LineChart
+                data={chartData}
+                margin={{
+                  top: 10,
+                  left: -20,
+                  right: 10,
+                  bottom: 10
+                }}
+              >
+                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)"/>
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => value}
+                  domain={xAxisDomain}
+                  type="category"
+                  stroke="hsl(var(--foreground) / 0.6)"
+                />
+                <YAxis domain={[0, 110]} hide={true} />
+                <Tooltip
+                  cursor={false}
+                  content={<ChartTooltipContent 
+                    indicator="line"
+                    formatter={(value, name, item) => (
+                      <div className="space-y-1">
+                        <p className="font-bold text-primary">{item.payload.plantName}</p>
+                        <p>Health: {item.payload.diagnosis}</p>
+                        <p className="text-muted-foreground text-xs">{item.payload.date}</p>
+                      </div>
+                    )}
+                    hideLabel
+                    className="bg-card/80 backdrop-blur-sm rounded-xl"
+                  />}
+                />
+                <defs>
+                    <linearGradient id="healthGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                    </linearGradient>
+                </defs>
+                <Line
+                  dataKey="health"
+                  type="monotone"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={3}
+                  dot={({ cx, cy }) => (
+                    <circle cx={cx} cy={cy} r={5} fill="hsl(var(--primary))" className="animate-pulse" />
+                  )}
+                  activeDot={{ r: 8 }}
+                  fill="url(#healthGradient)"
+                />
+              </LineChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
     </Card>
@@ -241,18 +244,18 @@ function PlantGallery() {
       </div>
     </div>
     <div className="col-span-1 md:col-span-3">
-        <h2 className="font-headline text-2xl mb-4 text-primary">My Plants</h2>
+        <h2 className="font-headline text-2xl mb-4 text-foreground">My Plants</h2>
         {(!user || user.isAnonymous) && (
-             <Alert className="bg-secondary/20 border-secondary/50">
-              <AlertTitle className="font-headline text-primary/90">Sign Up to Track Your Plants</AlertTitle>
+             <Alert className="bg-secondary text-foreground">
+              <AlertTitle className="font-headline font-semibold">Sign Up to Track Your Plants</AlertTitle>
               <AlertDescription>
                 Create a free account to save your plant analyses and watch them grow over time. Your personal plant dashboard awaits!
               </AlertDescription>
             </Alert>
         )}
         {user && !user.isAnonymous && analyses.length === 0 && (
-             <Alert className="bg-secondary/20 border-secondary/50">
-              <AlertTitle className="font-headline text-primary/90">No Plants Yet</AlertTitle>
+             <Alert className="bg-secondary text-foreground">
+              <AlertTitle className="font-headline font-semibold">No Plants Yet</AlertTitle>
               <AlertDescription>
                 You haven't saved any plant analyses. Go to the Scan page to get started!
               </AlertDescription>
@@ -261,7 +264,7 @@ function PlantGallery() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {user && !user.isAnonymous && analyses.map((analysis) => (
             <Link href={`/growth-tracker/${analysis.id}`} key={analysis.id}>
-              <Card className="overflow-hidden group h-full glassmorphic-panel hover:border-primary/80 transition-all duration-300">
+              <Card className="overflow-hidden group h-full shadow-sm hover:shadow-lg transition-all duration-300 rounded-2xl">
                 <CardContent className="p-0">
                   <div className="overflow-hidden">
                     <Image
@@ -269,12 +272,12 @@ function PlantGallery() {
                       alt={analysis.plantName}
                       width={400}
                       height={300}
-                      className="object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-110"
+                      className="object-cover aspect-[4/3] transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col items-start p-4">
-                  <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'secondary' : 'destructive'}>{analysis.identifiedDiseases[0]}</Badge>
+                  <Badge variant={analysis.identifiedDiseases[0] === 'Healthy' ? 'default' : 'destructive'} className={analysis.identifiedDiseases[0] === 'Healthy' ? 'bg-green-100 text-green-800 border-green-200' : ''}>{analysis.identifiedDiseases[0]}</Badge>
                   <h3 className="font-semibold mt-2 font-headline text-lg">{analysis.plantName}</h3>
                   <p className="text-sm text-muted-foreground">{new Date(analysis.analysisDate).toLocaleDateString()}</p>
                 </CardFooter>
@@ -294,7 +297,7 @@ export default function PlantsPage() {
       <div className="flex items-center gap-4">
         <History className="size-8 text-primary" />
         <div>
-          <h1 className="font-headline text-4xl text-primary">My Garden</h1>
+          <h1 className="font-headline text-4xl text-foreground">My Garden</h1>
           <p className="text-muted-foreground">
              Review your saved plant analyses and track their growth.
           </p>
@@ -306,5 +309,3 @@ export default function PlantsPage() {
     </div>
   );
 }
-
-    

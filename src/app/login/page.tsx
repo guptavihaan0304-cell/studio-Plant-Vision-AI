@@ -124,8 +124,8 @@ export default function LoginPage() {
   
   if (awaitingVerification) {
       return (
-         <div className="flex items-center justify-center min-h-screen bg-background">
-          <Card className="w-full max-w-md mx-4 shadow-xl text-center">
+         <div className="flex items-center justify-center min-h-screen bg-background p-4">
+          <Card className="w-full max-w-md mx-4 shadow-xl text-center rounded-2xl">
              <CardHeader>
                 <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-4">
                   <MailCheck className="text-primary size-10" />
@@ -155,8 +155,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-md mx-4 shadow-xl">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+      <Card className="w-full max-w-md mx-4 shadow-xl rounded-2xl">
         <CardHeader className="text-center">
             <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-4">
               <Sprout className="text-primary size-10" />
@@ -172,7 +172,7 @@ export default function LoginPage() {
           <CardContent className="space-y-4">
              {isSigningUp && (
                 <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     <Input
                         id="username"
                         type="text"
@@ -186,7 +186,7 @@ export default function LoginPage() {
                 </div>
              )}
             <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
                     id="email"
                     type="email"
@@ -199,7 +199,7 @@ export default function LoginPage() {
                 />
             </div>
             <div className="relative">
-                 <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                 <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                  <Input
                     id="password"
                     type="password"
@@ -213,7 +213,7 @@ export default function LoginPage() {
             </div>
              {isSigningUp && (
                 <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     <Input
                         id="confirmPassword"
                         type="password"
@@ -269,7 +269,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
-
-    

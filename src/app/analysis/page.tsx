@@ -70,7 +70,7 @@ export default function AnalysisPage() {
 
     toast({
       title: 'Analysis Saved',
-      description: 'Your plant analysis has been saved to your history.',
+      description: 'Your plant analysis has been saved to your garden.',
     });
   };
 
@@ -122,7 +122,7 @@ export default function AnalysisPage() {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <Card className="text-center shadow-lg">
+      <Card className="text-center shadow-lg rounded-3xl">
         <CardHeader>
           <div className="mx-auto bg-secondary p-3 rounded-full w-fit">
             <BrainCircuit className="size-8 text-primary" />
@@ -134,18 +134,18 @@ export default function AnalysisPage() {
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-6">
             <div
-                className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
+                className="border-2 border-dashed border-primary/50 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary transition-colors"
                 onClick={() => setIsCameraOpen(true)}
             >
                 <Camera className="size-12 text-primary/80" />
                 <p className="text-lg font-semibold font-headline">Live Camera Scan</p>
                 <p className="text-muted-foreground">Get real-time feedback from our AI.</p>
-                <Button disabled={isLoading} onClick={() => setIsCameraOpen(true)} >
-                {isLoading ? 'Loading...' : 'Start Camera'}
+                <Button disabled={isLoading} onClick={() => setIsCameraOpen(true)} className="rounded-full">
+                  📸 Start Camera
                 </Button>
             </div>
             <div
-                className="border-2 border-dashed border-primary/50 rounded-lg p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary/50 transition-colors"
+                className="border-2 border-dashed border-primary/50 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary transition-colors"
                 onClick={handleUploadClick}
             >
                 <input
@@ -159,8 +159,8 @@ export default function AnalysisPage() {
                 <UploadCloud className="size-12 text-primary/80" />
                 <p className="text-lg font-semibold font-headline">Upload an Image</p>
                 <p className="text-muted-foreground">Use a clear, well-lit photo for best results.</p>
-                <Button disabled={isLoading} onClick={handleUploadClick} >
-                {isLoading ? 'Loading...' : 'Upload Image'}
+                <Button disabled={isLoading} onClick={handleUploadClick} className="rounded-full">
+                  🖼️ Upload Image
                 </Button>
             </div>
         </CardContent>
@@ -179,11 +179,11 @@ export default function AnalysisPage() {
         </Dialog>
 
       {isLoading && (
-          <Card className="mt-8 text-center">
+          <Card className="mt-8 text-center rounded-3xl">
               <CardContent className="p-8">
                 <div className="flex flex-col items-center gap-4 text-muted-foreground">
-                    <Loader2 className="size-12 animate-spin text-primary" />
-                    <p className="font-semibold font-headline">Analyzing your plant...</p>
+                    <Leaf className="size-12 text-primary pulse-leaf" />
+                    <p className="font-semibold font-headline text-lg">Analyzing your plant...</p>
                     <p className="text-sm">This may take a moment. Please wait.</p>
                     {imagePreview && 
                       <Image 
@@ -191,7 +191,7 @@ export default function AnalysisPage() {
                         alt="Analyzing plant"
                         width={200}
                         height={200}
-                        className="rounded-lg object-contain mt-4"
+                        className="rounded-lg object-cover mt-4 shadow-md"
                       />
                     }
                 </div>
@@ -201,7 +201,7 @@ export default function AnalysisPage() {
 
       {analysis && imagePreview && !isLoading && (
         <div className="mt-8 space-y-8">
-           <Card>
+           <Card className="rounded-3xl">
               <CardHeader>
                   <CardTitle className="font-headline text-2xl">Analysis Complete</CardTitle>
               </CardHeader>
@@ -218,16 +218,16 @@ export default function AnalysisPage() {
               </CardContent>
            </Card>
           
-          <Card className="shadow-lg">
+          <Card className="shadow-lg rounded-3xl">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-start gap-4">
-                  <Leaf className="size-8 text-accent flex-shrink-0" />
+                  <Leaf className="size-8 text-primary flex-shrink-0" />
                   <div>
                     <CardTitle className="font-headline text-2xl">Plant Identification</CardTitle>
                     <CardDescription>Species & Care Information</CardDescription>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={handleBookmark} title="Save analysis">
+                <Button variant="ghost" size="icon" onClick={handleBookmark} title="Save analysis" className="rounded-full">
                   <Bookmark className="size-6" />
                   <span className="sr-only">Save Analysis</span>
                 </Button>
@@ -259,9 +259,9 @@ export default function AnalysisPage() {
             </Card>
 
           {analysis.diagnosis && (
-             <Card className="shadow-lg">
+             <Card className="shadow-lg rounded-3xl">
               <CardHeader className="flex flex-row items-start gap-4">
-                <Microscope className="size-8 text-accent flex-shrink-0" />
+                <Microscope className="size-8 text-primary flex-shrink-0" />
                 <div>
                   <CardTitle className="font-headline text-2xl">Health Diagnosis</CardTitle>
                   <CardDescription>AI-powered disease and deficiency detection.</CardDescription>
@@ -293,9 +293,9 @@ export default function AnalysisPage() {
           )}
 
           {analysis.remedies && (
-            <Card className="shadow-lg">
+            <Card className="shadow-lg rounded-3xl">
               <CardHeader className="flex flex-row items-start gap-4">
-                <Pill className="size-8 text-accent flex-shrink-0" />
+                <Pill className="size-8 text-primary flex-shrink-0" />
                 <div>
                   <CardTitle className="font-headline text-2xl">Care & Remedy Suggestions</CardTitle>
                   <CardDescription>Natural and organic solutions for a healthy plant.</CardDescription>

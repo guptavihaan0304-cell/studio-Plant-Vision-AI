@@ -7,7 +7,7 @@ import { LanguageProvider } from '@/hooks/use-language';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'PlantVision AI',
+  title: 'Smart Plant Doctor',
   description: 'AI-powered plant care assistant.',
 };
 
@@ -24,10 +24,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=Belleza&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased bg-background">
-         <div className="fixed inset-0 z-[-1] w-full h-full bg-gradient-to-br from-background via-emerald-950/30 to-background" />
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

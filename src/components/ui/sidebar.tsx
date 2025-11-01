@@ -1,3 +1,4 @@
+// This component is not used in the current app layout and can be removed or ignored.
 "use client"
 
 import * as React from "react"

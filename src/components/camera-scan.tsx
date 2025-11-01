@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Camera, Zap, Loader2, ScanLine } from 'lucide-react';
+import { Camera, Zap, Loader2, ScanLine, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -70,24 +70,20 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
 
   const handleCapture = () => {
     setIsScanning(true);
-    // Simulate a 2-second scan
-    setTimeout(() => {
-        if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            const context = canvas.getContext('2d');
-            if (context) {
-                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                const imageDataUri = canvas.toDataURL('image/jpeg');
-                onCapture(imageDataUri);
-            }
+    if (videoRef.current && canvasRef.current) {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        const context = canvas.getContext('2d');
+        if (context) {
+            context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            const imageDataUri = canvas.toDataURL('image/jpeg');
+            onCapture(imageDataUri);
         }
-        setIsScanning(false);
-    }, 2000);
+    }
   };
   
   const isLoading = disabled || isScanning;
@@ -115,7 +111,7 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
   }
 
   return (
-    <div className="w-full bg-black relative aspect-[9/16] sm:aspect-video overflow-hidden">
+    <div className="w-full bg-black relative aspect-[9/16] sm:aspect-video overflow-hidden rounded-2xl">
         <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
         <canvas ref={canvasRef} className="hidden" />
 
@@ -127,16 +123,12 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
             </div>
             
             <div className={cn("absolute inset-1/4 border-2 border-dashed border-white/50 rounded-lg pointer-events-none transition-colors duration-500",
-                isScanning && "border-primary animate-pulse"
+                isLoading && "border-primary"
             )}>
-                 {isScanning && (
-                    <>
-                        <div className="absolute top-2 left-2 text-primary font-bold text-sm bg-black/50 px-2 py-1 rounded">ANALYZING...</div>
-                        {/* Simulated defect spots */}
-                        <div className="absolute top-[20%] left-[30%] w-8 h-8 border-2 border-red-500 rounded-full animate-ping"></div>
-                        <div className="absolute bottom-[25%] right-[25%] w-12 h-12 border-2 border-red-500 rounded-full animate-ping delay-500"></div>
-                        <div className="absolute top-[40%] right-[15%] w-6 h-6 border-2 border-yellow-400 rounded-full animate-ping delay-1000"></div>
-                    </>
+                 {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                        <Leaf className="size-16 text-primary pulse-leaf" />
+                    </div>
                  )}
             </div>
 
@@ -144,7 +136,7 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
                 {isLoading ? (
                     <Loader2 className="h-8 w-8 animate-spin" />
                 ) : (
-                    <ScanLine className="h-8 w-8" />
+                    <p className="font-bold text-lg">🌿</p>
                 )}
                 <span className="sr-only">Scan Plant</span>
             </Button>
