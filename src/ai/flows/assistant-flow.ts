@@ -40,7 +40,7 @@ const assistantFlow = ai.defineFlow(
     const history = input.history;
     
     const response = await ai.generate({
-        model: 'googleai/gemini-2.5-flash',
+        // The model is inherited from the global config for consistency
         messages: [
             { role: 'system', content: [{ text: `You are a friendly and knowledgeable AI Plant Care Assistant. Your role is to provide helpful and concise advice on gardening, plant diseases, and general plant care.` }] },
             ...history,
