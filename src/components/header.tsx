@@ -77,7 +77,7 @@ export function Header() {
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
        <Link href="/" className="flex items-center gap-2">
             <Logo />
-            <h1 className="font-headline text-xl font-bold text-foreground hidden sm:block">Smart Plant Doctor</h1>
+            <h1 className="font-headline text-xl font-bold text-foreground hidden sm:block">PlantVision AI</h1>
         </Link>
       
       <div className="flex items-center gap-2">

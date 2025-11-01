@@ -7,7 +7,7 @@ import { LanguageProvider } from '@/hooks/use-language';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Smart Plant Doctor',
+  title: 'PlantVision AI',
   description: 'AI-powered plant care assistant.',
 };
 

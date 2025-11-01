@@ -15,7 +15,7 @@ export default function WelcomePage() {
                 <Logo className="size-12" />
             </div>
             <h1 className="text-5xl font-bold font-headline text-foreground mb-4">
-                Smart Plant Doctor
+                PlantVision AI
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Your intelligent partner in plant care. Identify plants, diagnose diseases, and get expert advice to help your green friends thrive.
