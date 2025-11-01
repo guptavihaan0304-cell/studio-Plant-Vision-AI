@@ -68,7 +68,7 @@ export default function WelcomePage() {
 function FeatureCard({ href, icon: Icon, title, description }: { href: string; icon: React.ElementType; title: string; description: string; }) {
   return (
     <Link href={href} className="group block">
-      <Card className="flex flex-col w-full h-full hover:border-primary/50 bg-white hover:bg-secondary transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 rounded-2xl">
+      <Card className="flex flex-col w-full h-full hover:border-primary/50 bg-card hover:bg-secondary transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 rounded-2xl">
           <CardHeader className="items-center text-center">
               <div className="bg-secondary group-hover:bg-background rounded-full p-3 mb-2 transition-colors">
                   <Icon className="size-7 text-primary"/>
