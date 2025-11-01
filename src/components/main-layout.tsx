@@ -18,7 +18,7 @@ const navItems = [
 export function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   
-  const showBottomNav = !pathname.startsWith('/login');
+  const showBottomNav = !pathname.startsWith('/profile');
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -31,13 +31,13 @@ export function MainLayout({ children }: { children: ReactNode }) {
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
-                  <Link href={item.href} key={item.href} className="flex flex-col items-center justify-center gap-1 text-muted-foreground w-16 h-16 rounded-full transition-all duration-300 ease-in-out group">
+                  <Link href={item.href} key={item.href} className="flex flex-col items-center justify-center gap-1 text-muted-foreground w-16 h-16 rounded-full transition-all duration-150 ease-in-out group">
                     <div className={cn(
-                      "relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ease-in-out",
+                      "relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-150 ease-in-out",
                       isActive ? 'bg-primary/20' : 'group-hover:bg-primary/10'
                     )}>
                       <item.icon className={cn(
-                        "size-6 transition-all duration-300",
+                        "size-6 transition-all duration-150",
                         isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/80'
                       )} />
                        {isActive && <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping -z-10"></span>}
@@ -52,5 +52,3 @@ export function MainLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
-    
