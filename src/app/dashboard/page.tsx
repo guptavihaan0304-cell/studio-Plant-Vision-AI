@@ -199,9 +199,8 @@ function HealthChart({ analyses }: { analyses: any[] }) {
               type="monotone"
               stroke="url(#healthGradient)"
               strokeWidth={3}
-              dot={({ key, ...props }) => {
-                const { key: e, ...rest } = props;
-                return <circle key={key} {...rest} r={5} fill="hsl(var(--primary))" />;
+              dot={({ key, cx, cy }) => {
+                return <circle key={key} cx={cx} cy={cy} r={5} fill="hsl(var(--primary))" />;
               }}
             />
             <defs>
