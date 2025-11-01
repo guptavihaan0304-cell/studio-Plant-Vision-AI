@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Bot, User, CornerDownLeft, Loader2, Volume2, Waves } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,8 @@ import { chatWithAssistant } from '@/ai/flows/assistant-flow';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 type Message = {
   role: 'user' | 'model';
@@ -23,25 +25,34 @@ export default function AssistantPage() {
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
-  useEffect(() => {
-    // Autoplay audio when it becomes available
-    const latestMessage = messages[messages.length - 1];
-    if (latestMessage?.role === 'model' && latestMessage.audioDataUri) {
-      if (audioRef.current) {
-        audioRef.current.src = latestMessage.audioDataUri;
-        audioRef.current.play().catch(e => console.error("Audio autoplay failed:", e));
-      }
+  const userDocRef = useMemoFirebase(() => {
+    if (!user || user.isAnonymous || !firestore) return null;
+    return doc(firestore, `users/${user.uid}`);
+  }, [user, firestore]);
+
+  const { data: userProfile } = useDoc(userDocRef);
+
+  const isVoiceAssistantEnabled = userProfile?.isVoiceAssistant ?? false;
+
+  const playAudio = useCallback((audioDataUri: string) => {
+    if (audioRef.current) {
+      audioRef.current.src = audioDataUri;
+      audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
     }
-  }, [messages]);
+  }, []);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     const userMessage: Message = { role: 'user', content: [{ text: input }] };
-    const assistantMessagePlaceholder: Message = { role: 'model', content: [{ text: '' }], isAudioLoading: true };
+    const assistantMessagePlaceholder: Message = { role: 'model', content: [{ text: '' }], isAudioLoading: isVoiceAssistantEnabled };
+    
     setMessages((prev) => [...prev, userMessage, assistantMessagePlaceholder]);
+    
     const currentInput = input;
     setInput('');
     setIsLoading(true);
@@ -50,24 +61,35 @@ export default function AssistantPage() {
       // Get text reply from assistant
       const response = await chatWithAssistant({ query: currentInput, history: messages });
       
-      setMessages((prev) => {
-          const newMessages = [...prev];
-          const lastMessage = newMessages[newMessages.length - 1];
-          if(lastMessage.role === 'model') {
-            lastMessage.content[0].text = response.reply;
-          }
-          return newMessages;
-      });
-      
-      // Get audio for the reply
-      const audioResponse = await textToSpeech({ text: response.reply });
+      let audioDataUri: string | undefined = undefined;
 
+      // Only get audio if the feature is enabled
+      if (isVoiceAssistantEnabled) {
+          try {
+              const audioResponse = await textToSpeech({ text: response.reply });
+              audioDataUri = audioResponse.audioDataUri;
+          } catch(audioError) {
+              console.error("Text to speech failed:", audioError);
+              toast({
+                  variant: 'destructive',
+                  title: 'Audio Error',
+                  description: 'Could not generate voice for the response.'
+              });
+          }
+      }
+      
+      // Update the placeholder message with the actual content
       setMessages((prev) => {
           const newMessages = [...prev];
-          const lastMessage = newMessages[newMessages.length - 1];
-          if(lastMessage.role === 'model') {
-            lastMessage.audioDataUri = audioResponse.audioDataUri;
-            lastMessage.isAudioLoading = false;
+          const lastMessageIndex = newMessages.length - 1;
+          if(newMessages[lastMessageIndex].role === 'model') {
+            newMessages[lastMessageIndex].content[0].text = response.reply;
+            newMessages[lastMessageIndex].isAudioLoading = false;
+            if (audioDataUri) {
+                newMessages[lastMessageIndex].audioDataUri = audioDataUri;
+                // Autoplay the audio
+                playAudio(audioDataUri);
+            }
           }
           return newMessages;
       });
@@ -136,10 +158,19 @@ export default function AssistantPage() {
                     </div>
                   )}
 
-                  {message.role === 'model' && message.isAudioLoading && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground border-t border-border mt-2 pt-2">
-                       <Waves className="size-4 animate-pulse" />
-                       <span>Generating audio...</span>
+                  {(message.isAudioLoading || message.audioDataUri) && (
+                    <div className="border-t border-border mt-2 pt-2 flex items-center justify-end">
+                       {message.isAudioLoading ? (
+                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Waves className="size-4 animate-pulse" />
+                                <span>Generating audio...</span>
+                            </div>
+                       ) : message.audioDataUri ? (
+                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => playAudio(message.audioDataUri!)}>
+                               <Volume2 className="size-4" />
+                               <span className="sr-only">Play audio</span>
+                           </Button>
+                       ) : null}
                     </div>
                   )}
                 </div>
