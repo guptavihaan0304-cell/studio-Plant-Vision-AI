@@ -1,17 +1,18 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, History, MessageSquare, Sprout } from 'lucide-react';
+import { Bot, History, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Logo } from '@/components/logo';
 
 export default function WelcomePage() {
   return (
     <div className="container mx-auto max-w-5xl py-12">
         <header className="text-center mb-16">
             <div className="inline-block bg-primary/20 text-primary p-4 rounded-full mb-4">
-                <Sprout className="size-12" />
+                <Logo className="size-12" />
             </div>
             <h1 className="text-5xl font-bold font-headline text-foreground mb-4">
                 Smart Plant Doctor

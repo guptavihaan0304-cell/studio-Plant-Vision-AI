@@ -19,9 +19,10 @@ import {
 } from '@/firebase/non-blocking-login';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { Sprout, User, KeyRound, MailCheck, Loader2 } from 'lucide-react';
+import { User, KeyRound, MailCheck, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { signOut } from 'firebase/auth';
+import { Logo } from '@/components/logo';
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -159,7 +160,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md mx-4 shadow-xl rounded-2xl">
         <CardHeader className="text-center">
             <div className="mx-auto bg-secondary p-3 rounded-full w-fit mb-4">
-              <Sprout className="text-primary size-10" />
+              <Logo className="text-primary size-10" />
             </div>
           <CardTitle className="font-headline text-3xl">
             {isSigningUp ? 'Create an Account' : 'Welcome Back'}
