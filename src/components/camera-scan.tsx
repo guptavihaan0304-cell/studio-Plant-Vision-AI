@@ -149,18 +149,6 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
                 <span className="sr-only">Scan Plant</span>
             </Button>
         </div>
-
-        {/* Scanning line effect */}
-        {isScanning && (
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-primary/70 shadow-[0_0_20px_5px_hsl(var(--primary))] animate-[scan_2s_ease-in-out_infinite] z-20"></div>
-        )}
-
-        <style jsx>{`
-            @keyframes scan {
-                0% { transform: translateY(0); }
-                100% { transform: translateY(100vh); }
-            }
-        `}</style>
     </div>
   );
 }
