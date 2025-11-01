@@ -122,49 +122,6 @@ export default function AnalysisPage() {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <Card className="text-center shadow-lg rounded-3xl">
-        <CardHeader>
-          <div className="mx-auto bg-secondary p-3 rounded-full w-fit">
-            <BrainCircuit className="size-8 text-primary" />
-          </div>
-          <CardTitle className="font-headline text-3xl mt-4">AI Plant Analysis</CardTitle>
-          <CardDescription className="max-w-md mx-auto">
-            Use your camera for a live scan or upload a photo. Our AI will identify your plant, diagnose issues, and suggest care.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-6">
-            <div
-                className="border-2 border-dashed border-primary/50 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary transition-colors"
-                onClick={() => setIsCameraOpen(true)}
-            >
-                <Camera className="size-12 text-primary/80" />
-                <p className="text-lg font-semibold font-headline">Live Camera Scan</p>
-                <p className="text-muted-foreground">Get real-time feedback from our AI.</p>
-                <Button disabled={isLoading} onClick={() => setIsCameraOpen(true)} className="rounded-full">
-                  📸 Start Camera
-                </Button>
-            </div>
-            <div
-                className="border-2 border-dashed border-primary/50 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 min-h-[300px] cursor-pointer hover:bg-secondary transition-colors"
-                onClick={handleUploadClick}
-            >
-                <input
-                id="plant-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-                disabled={isLoading}
-                />
-                <UploadCloud className="size-12 text-primary/80" />
-                <p className="text-lg font-semibold font-headline">Upload an Image</p>
-                <p className="text-muted-foreground">Use a clear, well-lit photo for best results.</p>
-                <Button disabled={isLoading} onClick={handleUploadClick} className="rounded-full">
-                  🖼️ Upload Image
-                </Button>
-            </div>
-        </CardContent>
-      </Card>
       
         <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
             <DialogContent className="max-w-5xl p-0 border-0">
@@ -311,3 +268,5 @@ export default function AnalysisPage() {
     </div>
   );
 }
+
+    
