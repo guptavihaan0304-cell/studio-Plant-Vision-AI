@@ -8,7 +8,7 @@ import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from "firebase/firestore";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { LineChart, CartesianGrid, XAxis, Line, Tooltip, YAxis, ResponsiveContainer } from "recharts";
+import { LineChart, CartesianGrid, XAxis, Line, Tooltip, YAxis, ResponsiveContainer, Area } from "recharts";
 import { useMemo } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -210,6 +210,7 @@ function HealthChart({ analyses }: { analyses: any[] }) {
                         <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                     </linearGradient>
                 </defs>
+                 <Area dataKey="health" type="monotone" fill="url(#healthGradient)" stroke="none" />
               </LineChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -308,3 +309,5 @@ export default function PlantsPage() {
     </div>
   );
 }
+
+    

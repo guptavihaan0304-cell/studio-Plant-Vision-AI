@@ -96,3 +96,5 @@ export default function GrowthTrackerPage() {
     </div>
   );
 }
+
+    
