@@ -10,15 +10,22 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
         className={cn("size-8", className)}
         {...props}
         >
-        <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-            fill="currentColor"
-            fillOpacity="0.3"
+        <path 
+            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" 
+            fill="currentColor" 
+            fillOpacity="0.1" 
         />
-        <path
-            d="M12 4c-2.21 0-4.21.9-5.66 2.34-.38.38-.38 1.02 0 1.41.38.38 1.02.38 1.41 0C8.79 6.7 10.3 6 12 6s3.21.7 4.24 1.76c.38.38 1.02.38 1.41 0s.38-1.02 0-1.41C16.21 4.9 14.21 4 12 4zm0 14c2.21 0 4.21-.9 5.66-2.34.38-.38.38-1.02 0-1.41s-1.02-.38-1.41 0C15.21 15.3 13.7 16 12 16s-3.21-.7-4.24-1.76c-.38-.38-1.02-.38-1.41 0s-.38 1.02 0 1.41C7.79 17.1 9.79 18 12 18zm-7-6h14v-2H5v2z"
-            fill="currentColor"
+        <path 
+            d="M15.5 5.5C14.28 4.53 12.76 4 11 4C6.58 4 3 7.58 3 12C3 13.76 3.53 15.28 4.5 16.5L15.5 5.5Z" 
+            fill="currentColor" 
+            fillOpacity="0.5"
         />
+        <path 
+            d="M19.5 7.5C20.47 8.72 21 10.24 21 12C21 16.42 17.42 20 13 20C11.24 20 9.72 19.47 8.5 18.5L19.5 7.5Z" 
+            fill="currentColor" 
+        />
+        <circle cx="12" cy="12" r="3" fill="white" />
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" fillOpacity="0.6"/>
     </svg>
   );
 }
