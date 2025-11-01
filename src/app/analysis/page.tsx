@@ -134,6 +134,38 @@ export default function AnalysisPage() {
                 <CameraScan onCapture={handleAnalysis} disabled={isLoading} />
             </DialogContent>
         </Dialog>
+        
+        {!analysis && !isLoading && (
+            <div className="flex flex-col items-center justify-center text-center py-16 px-4">
+                <Card className="w-full max-w-2xl rounded-3xl p-8">
+                    <div className="mx-auto bg-secondary p-4 rounded-full w-fit mb-6">
+                        <BrainCircuit className="size-12 text-primary" />
+                    </div>
+                    <CardTitle className="font-headline text-4xl mt-4">AI Plant Analysis</CardTitle>
+                    <CardDescription className="max-w-xl mx-auto mt-2">
+                        Use your camera or upload an image to get an instant analysis of your plant's species, health, and care needs.
+                    </CardDescription>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
+                         <Button size="lg" className="h-auto py-4 text-base rounded-xl" onClick={() => setIsCameraOpen(true)}>
+                            <Camera className="mr-3" />
+                            Live Camera Scan
+                        </Button>
+                        <Button size="lg" variant="outline" className="h-auto py-4 text-base rounded-xl" onClick={handleUploadClick}>
+                            <UploadCloud className="mr-3" />
+                            Upload an Image
+                        </Button>
+                        <input
+                            type="file"
+                            id="plant-upload"
+                            className="hidden"
+                            onChange={handleImageChange}
+                            accept="image/*"
+                        />
+                    </div>
+                </Card>
+            </div>
+      )}
+
 
       {isLoading && (
           <Card className="mt-8 text-center rounded-3xl">
@@ -268,5 +300,3 @@ export default function AnalysisPage() {
     </div>
   );
 }
-
-    
