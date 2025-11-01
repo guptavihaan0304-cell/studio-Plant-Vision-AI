@@ -127,12 +127,15 @@ export function CameraScan({ onCapture, disabled }: CameraScanProps) {
             )}>
                  {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                        <Leaf className="size-16 text-primary pulse-leaf" />
+                        <div className="relative flex items-center justify-center">
+                            <div className="absolute w-24 h-24 rounded-full bg-primary/50 animate-ripple"></div>
+                            <Leaf className="size-16 text-primary pulse-leaf" />
+                        </div>
                     </div>
                  )}
             </div>
 
-            <Button onClick={handleCapture} disabled={isLoading} size="lg" className="w-20 h-20 rounded-full border-4 border-white/50 bg-primary/80 hover:bg-primary z-20">
+            <Button onClick={handleCapture} disabled={isLoading} size="lg" className={cn("w-20 h-20 rounded-full border-4 border-white/50 bg-primary/80 hover:bg-primary z-20", !isLoading && "animate-breathing-glow")}>
                 {isLoading ? (
                     <Loader2 className="h-8 w-8 animate-spin" />
                 ) : (

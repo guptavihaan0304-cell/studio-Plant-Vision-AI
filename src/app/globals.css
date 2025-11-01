@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
 
     --card: 0 0% 100%;
@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    --primary: 130 35% 70%;
+    --primary: 130 35% 50%;
     --primary-foreground: 222.2 47.4% 11.2%;
     
     --secondary: 130 35% 90%;
@@ -30,7 +30,7 @@
     
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 130 35% 70%;
+    --ring: 130 35% 50%;
 
     --radius: 0.8rem;
 
@@ -48,8 +48,8 @@
     --popover: 220 40% 6%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 130 35% 70%;
-    --primary-foreground: 142 86% 96%;
+    --primary: 130 35% 60%;
+    --primary-foreground: 130 86% 96%;
     
     --secondary: 130 35% 20%;
     --secondary-foreground: 130 80% 90%;
@@ -94,4 +94,34 @@
 
 .pulse-leaf {
   animation: pulse-leaf 2s infinite ease-in-out;
+}
+
+@keyframes breathing-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px 0px hsla(var(--primary), 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 25px 8px hsla(var(--primary), 0.5);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ripple-effect {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.animate-breathing-glow {
+  animation: breathing-glow 3s infinite ease-in-out;
+}
+
+.animate-ripple {
+  animation: ripple-effect 1.5s ease-out forwards;
 }
